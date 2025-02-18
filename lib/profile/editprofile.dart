@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:goevent2/Api/ApiWrapper.dart';
 import 'package:goevent2/Api/Config.dart';
 import 'package:goevent2/AppModel/Homedata/HomedataController.dart';
+import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/home/home.dart';
 import 'package:goevent2/utils/AppWidget.dart';
 import 'package:goevent2/utils/color.dart';
@@ -65,8 +66,8 @@ class _EditState extends State<Edit> {
             
           });
 
-    print("Usename " + getData.read("UserLogin")["name"]);
-    print(getData.read("UserLogin")["id"]);
+    //print("Usename " + getData.read("UserLogin")["name"]);
+    //print(getData.read("UserLogin")["id"]);
     getData.read("UserLogin") != null
         ? setState(() {
             name.text = getData.read("UserLogin")["name"] ?? "";
@@ -221,7 +222,7 @@ class _EditState extends State<Edit> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SizedBox(height: height / 60),
-              Customtextfild3.textField(name, notifire.getwhitecolor, "User name".tr,
+              Customtextfild3.textField(userName, notifire.getwhitecolor, "User name".tr,
                   width, TextInputType.name, 50, TextAlign.start, false, context: context),
               SizedBox(height: height / 60),
               Customtextfild3.textField(name, notifire.getwhitecolor, "Name".tr,
