@@ -745,7 +745,6 @@ class _EventsDetailsState extends State<EventsDetails> {
                                     ? concert("image/date.png", 'Telefono',
                                         widget.evento.telefono)
                                     : Container(), // No mostrar nada si está vacío
-
                                 widget.evento.correo.isNotEmpty
                                     ? concert(
                                         "image/date.png",
@@ -933,39 +932,88 @@ class _EventsDetailsState extends State<EventsDetails> {
  */
 
   Widget concert(img, name1, name2) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(children: [
-        Container(
-            height: height / 15,
-            width: width / 7,
-            decoration: BoxDecoration(
-                color: notifire.getcardcolor,
-                borderRadius: const BorderRadius.all(Radius.circular(10))),
-            child: Padding(
-                padding: const EdgeInsets.all(8), child: Image.asset(img))),
-        SizedBox(width: width / 40),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(name1,
-              style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Gilroy Medium',
-                  color: notifire.textcolor)),
-          SizedBox(height: height / 300),
-          Ink(
-            width: Get.width * 0.705,
-            child: Text(name2,
-                maxLines: 2,
+    if (name1 != 'Correo electronico') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Row(children: [
+          Container(
+              height: height / 15,
+              width: width / 7,
+              decoration: BoxDecoration(
+                  color: notifire.getcardcolor,
+                  borderRadius: const BorderRadius.all(Radius.circular(10))),
+              child: Padding(
+                  padding: const EdgeInsets.all(8), child: Image.asset(img))),
+          SizedBox(width: width / 40),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(name1,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 17,
                     fontWeight: FontWeight.w500,
                     fontFamily: 'Gilroy Medium',
-                    color: Colors.grey)),
-          ),
-        ])
-      ]),
-    );
+                    color: notifire.textcolor)),
+            SizedBox(height: height / 300),
+            Ink(
+              width: Get.width * 0.705,
+              child: Text(name2,
+                  maxLines: 2,
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Gilroy Medium',
+                      color: Colors.grey)),
+            ),
+          ])
+        ]),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Row(children: [
+          Container(
+              height: height / 15,
+              width: width / 7,
+              decoration: BoxDecoration(
+                  color: notifire.getcardcolor,
+                  borderRadius: const BorderRadius.all(Radius.circular(10))),
+              child: Padding(
+                  padding: const EdgeInsets.all(8), child: Image.asset(img))),
+          SizedBox(width: width / 40),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            GestureDetector(
+                onTap: () async {
+                  final Uri emailUri = Uri(
+                    scheme: 'mailto',
+                    path: name2,
+                  );
+                  if (await canLaunchUrl(Uri.parse(emailUri.toString()))) {
+                    await launchUrl(Uri.parse(emailUri.toString()));
+                  } else {
+                    throw 'No se pudo abrir el correo electrónico';
+                  }
+                },
+                child: Text(name1,
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Gilroy Medium',
+                    color: notifire.textcolor)),
+              ),
+            SizedBox(height: height / 300),
+            Ink(
+              width: Get.width * 0.705,
+              child: Text(name2,
+                  maxLines: 2,
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Gilroy Medium',
+                      color: Colors.grey)),
+            ),
+          ])
+        ]),
+      );
+    }
   }
 
   // sponserList(eventSponsore, i) {
