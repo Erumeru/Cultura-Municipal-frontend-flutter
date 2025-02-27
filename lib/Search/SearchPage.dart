@@ -85,7 +85,7 @@ class _SearchPageState extends State<SearchPage> {
       []; // Lista para mantener el estado de cada marcador
   dynamic selectedConference;
 
-  double _currentSliderValue = 15.0; // Distancia en kilómetros
+  double _currentSliderValue = 7.0; // Distancia en kilómetros
   late MapController _mapController;
   double _circleRadius = 0.0; // Valor inicial de la distancia
 
@@ -363,8 +363,8 @@ void onSliderValueChanged(double newValue) {
   return FlutterMap(
     mapController: _mapController,
     options: MapOptions(
-      center: LatLng(latD, longD), // Cambiado a center para que el mapa se centre en la ubicación actual
-      zoom: 12,
+      initialCenter: LatLng(latD, longD), // Cambiado a center para que el mapa se centre en la ubicación actual
+      initialZoom: 12,
       onPositionChanged: (position, hasGesture) {
         _updateCircleRadius(); // Actualizar el radio cuando cambia la posición o el zoom
       },
