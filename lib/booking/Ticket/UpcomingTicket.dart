@@ -295,10 +295,9 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
                   iconImagePath: "image/imagen_icon.png",
                   context: context,
                 ),
-                
 
                 SizedBox(height: MediaQuery.of(context).size.height / 60),
-                
+
                 CustomImagePicker(
                   imagePaths:
                       pathEventImage, // Lista de rutas de imágenes, puedes inicializarla con las imágenes existentes
@@ -307,7 +306,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
                   textcolor: notifire.getwhitecolor,
                   iconImagePath: "image/imagen_icon.png",
                   context: context,
-                ), 
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height / 60),
                 CustomImageGallery(
                   imagePaths:
@@ -318,7 +317,6 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
                   context: context,
                 ),
 
-                
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 Customtextfild.textField(
                   controller: phone,
@@ -424,7 +422,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
                 //     context: context,
                 //     keyboardType: TextInputType.none),
                 buildEmptyFieldWarning(lat, verificar),
-                 SizedBox(height: MediaQuery.of(context).size.height / 40),
+                SizedBox(height: MediaQuery.of(context).size.height / 40),
                 // Customtextfild.textField(
                 //     controller: long,
                 //     name1: "Longitude".tr,
@@ -503,19 +501,18 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
   }
 
   Future<void> checkAllFieldsAndRegisterEvent(BuildContext context) async {
-  if (event_title.text.isNotEmpty &&
-      event_address_title.text.isNotEmpty &&
-      event_address.text.isNotEmpty &&
-      end_dateController.text.isNotEmpty &&
-      start_dateController.text.isNotEmpty &&
-      end_time.text.isNotEmpty &&
-      start_time.text.isNotEmpty &&
-      event_about.text.isNotEmpty &&
-      event_about_short.text.isNotEmpty &&
-      price.text.isNotEmpty &&
-      lat.text.isNotEmpty &&
-      long.text.isNotEmpty) {
-
+    if (event_title.text.isNotEmpty &&
+        event_address_title.text.isNotEmpty &&
+        event_address.text.isNotEmpty &&
+        end_dateController.text.isNotEmpty &&
+        start_dateController.text.isNotEmpty &&
+        end_time.text.isNotEmpty &&
+        start_time.text.isNotEmpty &&
+        event_about.text.isNotEmpty &&
+        event_about_short.text.isNotEmpty &&
+        price.text.isNotEmpty &&
+        lat.text.isNotEmpty &&
+        long.text.isNotEmpty) {
 /*
     // Mostrar diálogo de carga
     showDialog(
@@ -538,64 +535,66 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
       },
     );
 */
-    try {
-      int idMunicipio = int.parse(municipio.text);
-      int idCategoria = int.parse(cid.text);
-      int idPublicoObjetivo = int.parse(target_audience.text);
+      try {
+        int idMunicipio = int.parse(municipio.text);
 
-      await evento.crearEvento(
-        context: context,
-        tituloEvento: event_title.text,
-        imagenEvento: pathEventImage[0],
-        imagenPortadaEvento: pathCoverImage[0],
-        fechaInicio: start_dateController.text,
-        fechaFin: end_dateController.text,
-        horaInicio: start_time.text,
-        horaFin: end_time.text,
-        precio: price.text,
-        descripcionBreve: event_about_short.text,
-        descripcion: event_about.text,
-        galeriaImagen1: event_gallery[0],
-        galeriaImagen2: event_gallery[1],
-        //organizador: Event_sponsore.text,
-        telefono: phone.text,
-        correo: email.text,
-        tituloDireccion: event_address_title.text,
-        direccionEvento: event_address.text,
-        latitud: lat.text,
-        longitud: long.text,
-        //idUsuario: 1,
-        idMunicipio: idMunicipio,
-        idCategoria: idCategoria,
-        idPublicoObjetivo: idPublicoObjetivo,
-      );
+        int idCategoria = int.parse(cid.text);
+        int idPublicoObjetivo = int.parse(target_audience.text);
+        print(event_gallery[2]);
 
-      // Ocultar el diálogo de carga
-      //Navigator.of(context).pop(); 
+        await evento.crearEvento(
+          context: context,
+          tituloEvento: event_title.text,
+          imagenEvento: pathEventImage[0],
+          imagenPortadaEvento: pathCoverImage[0],
+          fechaInicio: start_dateController.text,
+          fechaFin: end_dateController.text,
+          horaInicio: start_time.text,
+          horaFin: end_time.text,
+          precio: price.text,
+          descripcionBreve: event_about_short.text,
+          descripcion: event_about.text,
+          galeriaImagen1: event_gallery[0],
+          galeriaImagen2: event_gallery[1],
+          galeriaImagen3: event_gallery[2],
+          //organizador: Event_sponsore.text,
+          telefono: phone.text,
+          correo: email.text,
+          tituloDireccion: event_address_title.text,
+          direccionEvento: event_address.text,
+          latitud: lat.text,
+          longitud: long.text,
+          //idUsuario: 1,
+          idMunicipio: idMunicipio,
+          idCategoria: idCategoria,
+          idPublicoObjetivo: idPublicoObjetivo,
+        );
 
-      // Navegar a Bottombar
-      //Get.to(() => const Bottombar(), duration: Duration.zero);
+        // Ocultar el diálogo de carga
+        //Navigator.of(context).pop();
 
-      ApiWrapper.showToastMessage("Evento Registrado Correctamente");
+        // Navegar a Bottombar
+        //Get.to(() => const Bottombar(), duration: Duration.zero);
 
-    } catch (e) {
-      // Ocultar el diálogo de carga en caso de error
-      //Navigator.of(context).pop();
+        ApiWrapper.showToastMessage("Evento Registrado Correctamente");
+      } catch (e) {
+        // Ocultar el diálogo de carga en caso de error
+        //Navigator.of(context).pop();
 
-      print('Error de formato: $e');
+        print('Error de formato: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Por favor, introduce valores válidos.')),
+        );
+      }
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, introduce valores válidos.')),
+        SnackBar(
+          content: Text('Please fill all fields'.tr),
+          duration: Duration(seconds: 2),
+        ),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Please fill all fields'.tr),
-        duration: Duration(seconds: 2),
-      ),
-    );
   }
-}
 
   Visibility buildEmptyFieldWarning(
     TextEditingController controller,

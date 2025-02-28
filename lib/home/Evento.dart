@@ -17,7 +17,7 @@ class Evento {
   final String descripcion;
   final String? galeriaImagen1; // Puede ser null
   final String? galeriaImagen2; // Puede ser null
-  //final String? galeriaImagen3; // Puede ser null
+  final String? galeriaImagen3; // Puede ser null
   final String organizador;
   final String telefono;
   final String correo;
@@ -46,7 +46,7 @@ class Evento {
     required this.descripcion,
     this.galeriaImagen1,
     this.galeriaImagen2,
-    //this.galeriaImagen3,
+    this.galeriaImagen3,
     required this.organizador,
     required this.telefono,
     required this.correo,
@@ -77,7 +77,7 @@ class Evento {
       descripcion: json['descripcion'] ?? '',
       galeriaImagen1: json['galeria_imagen_1'], // Puede ser null
       galeriaImagen2: json['galeria_imagen_2'], // Puede ser null
-      //galeriaImagen3: json['galeria_imagen_3'], // Puede ser null
+      galeriaImagen3: json['galeria_imagen_3'], // Puede ser null
       organizador: json['organizador'] ?? '',
       telefono: json['telefono'] ?? '',
       correo: json['correo'] ?? '',

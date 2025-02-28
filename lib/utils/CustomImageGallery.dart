@@ -45,7 +45,7 @@ class _CustomImageGalleryState extends State<CustomImageGallery> {
         const SizedBox(height: 10.0),
         Row(
           children: List.generate(
-            widget.imagePaths.length < 2 ? widget.imagePaths.length + 1 : 2,
+            widget.imagePaths.length < 3 ? widget.imagePaths.length + 1 : 3,
             (index) {
               if (index == widget.imagePaths.length) {
                 return GestureDetector(
@@ -122,13 +122,13 @@ class _CustomImageGalleryState extends State<CustomImageGallery> {
         final base64Image = 'data:image/png;base64,${base64Encode(resizedBytes)}';
 
         setState(() {
-          if (widget.imagePaths.length < 3) {
+          if (widget.imagePaths.length < 4) {
             widget.imagePaths.add(base64Image);
           }
         });
       }
     }
-    while (widget.imagePaths.length < 3) {
+    while (widget.imagePaths.length < 4) {
       widget.imagePaths.add(null);
     }
   }

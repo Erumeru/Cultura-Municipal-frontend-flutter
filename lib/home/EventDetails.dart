@@ -219,13 +219,31 @@ class _EventsDetailsState extends State<EventsDetails> {
     }
   }
 
-  void agregarImagenesAGaleria() {
+  /// Method that validates the existence of an image in the database avoiding the creation of blank "images" in agregarImagenesAGaleria()
+  Future<bool> validImageAvailability(String imgUrl) async {
+    try {
+      final response =
+          await http.head(Uri.parse('http://216.225.205.93:3000${imgUrl}'));
+      return response.statusCode == 200 &&
+          response.headers['content-type']?.startsWith('image') == true;
+    } catch (e) {
+      return false; // Return false if there's an error (e.g., network issue)
+    }
+  }
+
+  void agregarImagenesAGaleria() async {
     if (widget.evento.galeriaImagen1!.isNotEmpty) {
       event_gallery.add(widget.evento.galeriaImagen1);
     }
     if (widget.evento.galeriaImagen2!.isNotEmpty) {
       event_gallery.add(widget.evento.galeriaImagen2);
     }
+    // Checked existence of 3rd and last image
+    final isImage3Valid = await validImageAvailability(widget.evento.galeriaImagen3!);
+    if (isImage3Valid) {
+      event_gallery.add(widget.evento.galeriaImagen3);
+    }
+
     if (widget.evento.imagenEvento.isNotEmpty) {
       event_gallery.add(widget.evento.imagenEvento);
     }
@@ -981,24 +999,24 @@ class _EventsDetailsState extends State<EventsDetails> {
           SizedBox(width: width / 40),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             GestureDetector(
-                onTap: () async {
-                  final Uri emailUri = Uri(
-                    scheme: 'mailto',
-                    path: name2,
-                  );
-                  if (await canLaunchUrl(Uri.parse(emailUri.toString()))) {
-                    await launchUrl(Uri.parse(emailUri.toString()));
-                  } else {
-                    throw 'No se pudo abrir el correo electrónico';
-                  }
-                },
-                child: Text(name1,
-                style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Gilroy Medium',
-                    color: notifire.textcolor)),
-              ),
+              onTap: () async {
+                final Uri emailUri = Uri(
+                  scheme: 'mailto',
+                  path: name2,
+                );
+                if (await canLaunchUrl(Uri.parse(emailUri.toString()))) {
+                  await launchUrl(Uri.parse(emailUri.toString()));
+                } else {
+                  throw 'No se pudo abrir el correo electrónico';
+                }
+              },
+              child: Text(name1,
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Gilroy Medium',
+                      color: notifire.textcolor)),
+            ),
             SizedBox(height: height / 300),
             Ink(
               width: Get.width * 0.705,

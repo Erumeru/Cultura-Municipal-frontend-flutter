@@ -173,7 +173,6 @@ class AuthController extends GetxController {
       final token = await UserPreferences.getToken();
       final iduser = await UserPreferences.getUserId();
       final intiduserInt = int.parse(iduser!);
-
       final Map<String, dynamic> data = {
         'titulo_evento': tituloEvento,
         'imagen_evento': imagenEvento,
@@ -187,6 +186,7 @@ class AuthController extends GetxController {
         'descripcion': descripcion,
         'galeria_imagen_1': galeriaImagen1,
         'galeria_imagen_2': galeriaImagen2,
+        'galeria_imagen_3': galeriaImagen3,
         'organizador': iduser,
         'telefono': telefono,
         'correo': correo,
