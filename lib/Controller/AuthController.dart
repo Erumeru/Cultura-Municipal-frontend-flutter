@@ -315,9 +315,11 @@ class AuthController extends GetxController {
       if (jsonResponse['rta'] == true) {
         var message = jsonResponse['message'];
         final user = message[0];
-        final token = user['token'];
-        final id = user['id_user'];
-        final fechaExpiracion = user['fechaExpiracion'];
+        //Token
+        final token = message[0]['token'];
+        //ID del usuario
+        final id = jsonResponse['dataUser']['id'];
+        final fechaExpiracion = message[0]['fechaExpiracion'];
 
         print('ID del usuario: $id');
         print('Token recibido: $token');
