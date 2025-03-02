@@ -540,7 +540,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
 
         int idCategoria = int.parse(cid.text);
         int idPublicoObjetivo = int.parse(target_audience.text);
-        print(event_gallery[2]);
+        // print(event_gallery[2]);
 
         await evento.crearEvento(
           context: context,
@@ -554,9 +554,12 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
           precio: price.text,
           descripcionBreve: event_about_short.text,
           descripcion: event_about.text,
-          galeriaImagen1: event_gallery[0],
-          galeriaImagen2: event_gallery[1],
-          galeriaImagen3: event_gallery[2],
+          galeriaImagen1:
+              event_gallery.length > 0 ? event_gallery[0] : null, // Opcional
+          galeriaImagen2:
+              event_gallery.length > 1 ? event_gallery[1] : null, // Opcional
+          galeriaImagen3:
+              event_gallery.length > 2 ? event_gallery[2] : null, // Opcional
           //organizador: Event_sponsore.text,
           telefono: phone.text,
           correo: email.text,

@@ -231,15 +231,31 @@ class _EventsDetailsState extends State<EventsDetails> {
     }
   }
 
+  void addImageToGallery(String? galeriaImagen, List<dynamic> ev_gallery) {
+    ev_gallery.add(galeriaImagen);
+  }
+
   void agregarImagenesAGaleria() async {
-    if (widget.evento.galeriaImagen1!.isNotEmpty) {
-      event_gallery.add(widget.evento.galeriaImagen1);
+    
+    if (await validImageAvailability(widget.evento.galeriaImagen1!)) {
+      addImageToGallery(widget.evento.galeriaImagen1, event_gallery);
     }
-    if (widget.evento.galeriaImagen2!.isNotEmpty) {
-      event_gallery.add(widget.evento.galeriaImagen2);
+
+    // if (widget.evento.galeriaImagen1!.isNotEmpty) {
+    //   event_gallery.add(widget.evento.galeriaImagen1);
+    // }
+
+    if (await validImageAvailability(widget.evento.galeriaImagen2!)) {
+      addImageToGallery(widget.evento.galeriaImagen2, event_gallery);
     }
+
+    // if (widget.evento.galeriaImagen2!.isNotEmpty) {
+    //   event_gallery.add(widget.evento.galeriaImagen2);
+    // }
+
     // Checked existence of 3rd and last image
-    final isImage3Valid = await validImageAvailability(widget.evento.galeriaImagen3!);
+    final isImage3Valid =
+        await validImageAvailability(widget.evento.galeriaImagen3!);
     if (isImage3Valid) {
       event_gallery.add(widget.evento.galeriaImagen3);
     }

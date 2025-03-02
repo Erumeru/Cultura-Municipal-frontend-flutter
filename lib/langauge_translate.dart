@@ -1543,7 +1543,7 @@ class LocaleString extends Translations {
           "Free" : "Sin costo",
           "Target audience": "Público objetivo",
           "Category list": "Lista de categorías",
-          "Image Gallery": "Galería de imágenes",
+          "Image Gallery (optional)": "Galería de imágenes (opcional)",
           "Register event" : "Registrar evento",
           "Location" :"Ubicación",
           "Select Location" :"Seleccione el lugar",

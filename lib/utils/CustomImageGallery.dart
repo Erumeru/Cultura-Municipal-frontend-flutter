@@ -35,7 +35,7 @@ class _CustomImageGalleryState extends State<CustomImageGallery> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Image Gallery'.tr,
+          'Image Gallery (optional)'.tr,
           style: TextStyle(
             color: widget.labelclr,
             fontSize: 16.0,
