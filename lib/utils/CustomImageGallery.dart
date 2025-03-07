@@ -134,4 +134,3 @@ class _CustomImageGalleryState extends State<CustomImageGallery> {
   }
 
 }
-

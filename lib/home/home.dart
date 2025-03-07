@@ -290,6 +290,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     print('El id es: ${userId}');
 
+
+//Simple check para ver la respuesta de la api al buscar usuario
+// try{
+
+//     var url = Uri.parse('http://216.225.205.93:3000/api/usuarios/{$userId}');
+//     final response = await http.get(url);
+
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       print("User Data: $data");
+//     } else {
+//       print("Failed to load user: ${response.statusCode}");
+//       print(response.body);
+//     }
+//     }catch(e){
+//       print('Error al cargar el usuario: $e');
+//     }
+
+
+
+
     if (userId == null) {
       print(
           'El id de usuario es null, no se pueden cargar los eventos favoritos');

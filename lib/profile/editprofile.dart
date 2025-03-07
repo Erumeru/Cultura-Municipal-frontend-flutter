@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:goevent2/Api/ApiWrapper.dart';
 import 'package:goevent2/Api/Config.dart';
 import 'package:goevent2/AppModel/Homedata/HomedataController.dart';
+import 'package:goevent2/Controller/UserModel.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/home/home.dart';
 import 'package:goevent2/utils/AppWidget.dart';
@@ -40,7 +41,7 @@ class _EditState extends State<Edit> {
   final number = TextEditingController();
 
   String? path;
-  var userdata;
+  UserModel? userData;
   String? networkimage;
   String? base64Image;
   final ImagePicker imgpicker = ImagePicker();
@@ -50,38 +51,47 @@ class _EditState extends State<Edit> {
     final prefs = await SharedPreferences.getInstance();
     bool? previusstate = prefs.getBool("setIsDark");
     notifire.setIsDark = previusstate;
-    }
+  }
+
+  Future<void> loadUserData() async {
+    // Fetch user data from preferences
+    userData = await UserPreferences.getUser();
+
+    setState(() {
+      userName.text = userData?.userName ?? '';
+      name.text = userData?.name ?? '';
+      lastName.text = userData?.lastName ?? '';
+      number.text = userData?.cellPhone.toString() ?? '';
+      email.text = userData?.email ?? '';
+      password.text = "12345";
+      networkimage = "hola";
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     //getdarkmodepreviousstate();
-   setState(() {
-            userName.text = "Adrian61916";
-            name.text = 'adrian';
-            number.text = '6442201444';
-            email.text = "adrian@hptmail.com";
-            password.text ="12345";
-            networkimage = "hola";
-            
-          });
+    loadUserData();
 
     //print("Usename " + getData.read("UserLogin")["name"]);
     //print(getData.read("UserLogin")["id"]);
-    getData.read("UserLogin") != null
-        ? setState(() {
-            name.text = getData.read("UserLogin")["name"] ?? "";
-            number.text = getData.read("UserLogin")["mobile"] ?? "";
-            email.text = getData.read("UserLogin")["email"] ?? "";
-            password.text = getData.read("UserLogin")["password"] ?? "";
-            networkimage = getData.read("UserLogin")["pro_pic"] ?? "";
-            getData.read("UserLogin")["pro_pic"] != "null"
-                ? setState(() {
-                    networkimageconvert();
-                  })
-                : const SizedBox();
-          })
-        : null;
+
+
+    // getData.read("UserLogin") != null
+    //     ? setState(() {
+    //         name.text = getData.read("UserLogin")["name"] ?? "";
+    //         number.text = getData.read("UserLogin")["mobile"] ?? "";
+    //         email.text = getData.read("UserLogin")["email"] ?? "";
+    //         password.text = getData.read("UserLogin")["password"] ?? "";
+    //         networkimage = getData.read("UserLogin")["pro_pic"] ?? "";
+    //         getData.read("UserLogin")["pro_pic"] != "null"
+    //             ? setState(() {
+    //                 networkimageconvert();
+    //               })
+    //             : const SizedBox();
+    //       })
+    //     : null;
 
   }
 
@@ -222,14 +232,31 @@ class _EditState extends State<Edit> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SizedBox(height: height / 60),
-              Customtextfild3.textField(userName, notifire.getwhitecolor, "User name".tr,
-                  width, TextInputType.name, 50, TextAlign.start, false, context: context),
+              Customtextfild3.textField(
+                  userName,
+                  notifire.getwhitecolor,
+                  "User name".tr,
+                  width,
+                  TextInputType.name,
+                  50,
+                  TextAlign.start,
+                  false,
+                  context: context),
               SizedBox(height: height / 60),
               Customtextfild3.textField(name, notifire.getwhitecolor, "Name".tr,
-                  width, TextInputType.name, 50, TextAlign.start, false, context: context),
+                  width, TextInputType.name, 50, TextAlign.start, false,
+                  context: context),
               SizedBox(height: height / 60),
-              Customtextfild3.textField(name, notifire.getwhitecolor, "Last name".tr,
-                  width, TextInputType.name, 50, TextAlign.start, false, context: context),
+              Customtextfild3.textField(
+                  lastName,
+                  notifire.getwhitecolor,
+                  "Last name".tr,
+                  width,
+                  TextInputType.name,
+                  50,
+                  TextAlign.start,
+                  false,
+                  context: context),
               SizedBox(height: height / 60),
               Customtextfild3.textField(
                   email,
@@ -239,7 +266,8 @@ class _EditState extends State<Edit> {
                   TextInputType.name,
                   50,
                   TextAlign.start,
-                  false, context: context),
+                  false,
+                  context: context),
               SizedBox(height: height / 60),
               Customtextfild3.textField(
                   number,
@@ -249,17 +277,21 @@ class _EditState extends State<Edit> {
                   TextInputType.name,
                   50,
                   TextAlign.start,
-                  true, context: context),
+                  true,
+                  context: context),
               SizedBox(height: height / 60),
-              Customtextfild3.textField(
-                  password,
-                  notifire.getwhitecolor,
-                  "Password".tr,
-                  width,
-                  TextInputType.name,
-                  50,
-                  TextAlign.start,
-                  false, context: context),
+              
+              //Text for password
+              // Customtextfild3.textField(
+              //     password,
+              //     notifire.getwhitecolor,
+              //     "Password".tr,
+              //     width,
+              //     TextInputType.name,
+              //     50,
+              //     TextAlign.start,
+              //     false,
+              //     context: context),
             ]),
           ),
         ]),
@@ -268,7 +300,8 @@ class _EditState extends State<Edit> {
   }
 
   void _openGallery(BuildContext context) async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       path = pickedFile.path;
       setState(() {});

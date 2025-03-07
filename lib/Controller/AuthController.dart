@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:goevent2/Api/ApiWrapper.dart';
 import 'package:goevent2/Bottombar.dart';
+import 'package:goevent2/Controller/UserModel.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/utils/AppWidget.dart';
 import 'package:http/http.dart' as http;
@@ -318,12 +319,24 @@ class AuthController extends GetxController {
         //Token
         final token = message[0]['token'];
         //ID del usuario
-        final id = jsonResponse['dataUser']['id'];
+        final dataUser= jsonResponse['dataUser'];
+        final id = dataUser['id'];
         final fechaExpiracion = message[0]['fechaExpiracion'];
 
         print('ID del usuario: $id');
         print('Token recibido: $token');
         print('fechaExpiracion recibido: $fechaExpiracion');
+
+        UserModel userModelData = UserModel(
+          userId: dataUser['id'],
+          userName: dataUser['nombre_usuario'],
+          name: dataUser['nombre'],
+          lastName: dataUser['apellido'], 
+          email: dataUser['email'], 
+          cellPhone: dataUser['telefono']
+          );
+        
+        await UserPreferences.saveUser(userModelData);
 
         // Guardar token e ID del usuario usando UserPreferences
         await UserPreferences.setToken(token);
