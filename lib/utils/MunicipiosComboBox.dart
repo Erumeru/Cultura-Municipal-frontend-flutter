@@ -55,9 +55,12 @@ class _MunicipiosBoxState extends State<MunicipiosComboBox> {
         setState(() {
           _municipiosList = jsonResponse['municipios'];
           print(_municipiosList);
-          if (_municipiosList.isNotEmpty) {
-            _selectedmunicipiosId = _municipiosList.first['id'].toString();
-          }
+
+          //Commented if to stop autocompleting the municipality list
+
+          // if (_municipiosList.isNotEmpty) {
+          //   _selectedmunicipiosId = _municipiosList.first['id'].toString();
+          // }
         });
       } else {
         print('Error: La respuesta no contiene una lista de Municipios.');
@@ -82,6 +85,9 @@ class _MunicipiosBoxState extends State<MunicipiosComboBox> {
         ),
         DropdownButtonFormField<String>(
           value: _selectedmunicipiosId,
+          hint: Text(
+            "Select municipality".tr,
+          ),
           onChanged: (value) {
             setState(() {
               _selectedmunicipiosId = value;
@@ -93,6 +99,7 @@ class _MunicipiosBoxState extends State<MunicipiosComboBox> {
           dropdownColor: notifire.getcardcolor,
           decoration: const InputDecoration(),
           items: _municipiosList.map<DropdownMenuItem<String>>((municipio) {
+            
             return DropdownMenuItem<String>(
               value: municipio['id'].toString(),
               child: SizedBox(
@@ -111,6 +118,7 @@ class _MunicipiosBoxState extends State<MunicipiosComboBox> {
                   ],
                 ),
               ),
+              
             );
           }).toList(),
         ),

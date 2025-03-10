@@ -55,9 +55,12 @@ class _TargetAudienceBoxState extends State<TargetAudienceComboBox> {
         setState(() {
           _audienceList = jsonResponse['publicosObjetivos'];
           print(_audienceList);
-          if (_audienceList.isNotEmpty) {
-            _selectedAudienceId = _audienceList.first['id'].toString();
-          }
+
+          //Commented if to stop autocompleting the Target audience list
+
+          // if (_audienceList.isNotEmpty) {
+          //   _selectedAudienceId = _audienceList.first['id'].toString();
+          // }
         });
       } else {
         print('Error: La respuesta no contiene una lista de publico.');
@@ -92,6 +95,9 @@ class _TargetAudienceBoxState extends State<TargetAudienceComboBox> {
           },
           dropdownColor: notifire.getcardcolor,
           decoration: const InputDecoration(),
+          hint: Text(
+            "Select target audience".tr,
+          ),
           items: _audienceList.map<DropdownMenuItem<String>>((audiencia) {
             return DropdownMenuItem<String>(
               value: audiencia['id'].toString(),

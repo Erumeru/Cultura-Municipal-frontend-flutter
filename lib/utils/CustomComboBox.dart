@@ -52,9 +52,12 @@ class _CustomComboBoxState extends State<CustomComboBox> {
       if (jsonResponse is Map && jsonResponse['categorias'] is List) {
         setState(() {
           _categoriasList = jsonResponse['categorias'];
-          if (_categoriasList.isNotEmpty) {
-            _selectedCategoriaId = _categoriasList.first['id'].toString();
-          }
+
+          //Commented if to stop autocompleting the categories list
+
+          // if (_categoriasList.isNotEmpty) {
+          //   _selectedCategoriaId = _categoriasList.first['id'].toString();
+          // }
         });
       } else {
         print('Error: La respuesta no contiene una lista de categorías.');
@@ -87,6 +90,9 @@ class _CustomComboBoxState extends State<CustomComboBox> {
               }
             });
           },
+          hint: Text(
+            "Select category".tr,
+          ),
           dropdownColor: notifire.getcardcolor,
           decoration: const InputDecoration(),
           items: _categoriasList.map<DropdownMenuItem<String>>((categoria) {
