@@ -40,10 +40,13 @@ class _SignupState extends State<Signup> {
   final fpassword = TextEditingController();
   final spassword = TextEditingController();
   final referral = TextEditingController();
+  final age = TextEditingController();
   bool isLoading = false;
   String? _selectedCountryCode = '+52';
   final login = Get.put(AuthController());
   final x = Get.put(AuthController());
+  String? gender;
+  bool? genderSelected;
 
   getdarkmodepreviousstate() async {
     final prefs = await SharedPreferences.getInstance();
@@ -168,16 +171,113 @@ class _SignupState extends State<Signup> {
                               buildEmptyFieldWarning(lastname, verificar),
                               SizedBox(height: height / 100),
 
+                              Row(
+                                children: [
+                                  Expanded(
+                                      flex: 4,
+                                      child: Column(
+                                        children: [
+                                          Customtextfild.textField(
+                                            controller: userName,
+                                            name1: "User name".tr,
+                                            labelclr: Colors.grey,
+                                            textcolor: notifire.getwhitecolor,
+                                            prefixIcon: Image.asset(
+                                                "image/Profile.png",
+                                                scale: 3.5,
+                                                color: notifire.textcolor),
+                                            context: context,
+                                          ),
+                                        ],
+                                      )),
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
+                                        onPressed: () => {
+                                              setState(() {
+                                                genderSelected = true;
+
+                                                gender = "Male";
+                                              })
+                                            },
+                                        icon: Icon(
+                                          Icons.male,
+                                          color: gender == "Male"
+                                              ? Colors.blue
+                                              : Colors.grey,
+                                        )),
+                                    //     if (gender == "Female") Text("!".tr)
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
+                                        onPressed: () => {
+                                              setState(() {
+                                                genderSelected = true;
+                                                gender = "Female";
+                                              })
+                                            },
+                                        icon: Icon(
+                                          Icons.female,
+                                          color: gender == "Female"
+                                              ? Colors.pink
+                                              : Colors.grey,
+                                        )),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          genderSelected = true;
+                                          gender = "Other";
+                                        });
+                                      },
+                                      icon: Icon(
+                                        Icons.transgender,
+                                        color: gender == "Other"
+                                            ? Colors.purple
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: buildEmptyFieldWarning(
+                                        userName, verificar),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: genderSelected == false
+                                        ? Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              "!".tr,
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: height / 100),
+
                               Customtextfild.textField(
-                                controller: userName,
-                                name1: "User name".tr,
+                                controller: age,
+                                name1: "Age".tr,
                                 labelclr: Colors.grey,
+                                keyboardType: TextInputType.number,
                                 textcolor: notifire.getwhitecolor,
-                                prefixIcon: Image.asset("image/Profile.png",
+                                prefixIcon: Image.asset("image/calender.png",
                                     scale: 3.5, color: notifire.textcolor),
                                 context: context,
                               ),
-                              buildEmptyFieldWarning(userName, verificar),
+                              buildEmptyFieldWarning(age, verificar),
                               SizedBox(height: height / 100),
 
                               Ink(
@@ -538,7 +638,10 @@ class _SignupState extends State<Signup> {
             semail.text.isNotEmpty &&
             //number.text.isNotEmpty &&
             fpassword.text.isNotEmpty &&
-            spassword.text.isNotEmpty
+            spassword.text.isNotEmpty &&
+            age.text.isNotEmpty &&
+            (gender != null && 
+                genderSelected != false)
         // &&        referral.text.isNotEmpty
         ) {
       if ((RegExp(
@@ -566,14 +669,22 @@ class _SignupState extends State<Signup> {
               print('Nombre usuario: ${userName.text}');
               print('Telefono: ${number.text}');
               print('contrasna: ${fpassword.text}');
+              print('edad: ${age.text}');
+              print('genero: ${gender}');
 
               try {
                 int? telefono;
+                int? edad;
                 if (number.text.isNotEmpty) {
                   telefono = int.parse(number.text);
                 } else {
                   telefono =
                       null; // O el valor predeterminado que prefieras, como 0.
+                }
+                if (age.text.isNotEmpty) {
+                  edad = int.parse(age.text);
+                } else {
+                  edad = null;
                 }
 
                 login.registrarUsuario(
@@ -582,7 +693,9 @@ class _SignupState extends State<Signup> {
                     nombre: name.text,
                     telefono: telefono,
                     apellido: lastname.text,
-                    password: fpassword.text);
+                    password: fpassword.text,
+                    edad: edad,
+                    gender: gender);
               } catch (e) {
                 ApiWrapper.showToastMessage(
                     'Error al registrar el usuario. Por favor, verifica los datos ingresados o intentelo de nuevo mas tarde.');
@@ -603,6 +716,12 @@ class _SignupState extends State<Signup> {
         ApiWrapper.showToastMessage('Please enter valid email address'.tr);
       }
     } else {
+      if (gender == null) {
+        print("calando ${gender}");
+        ApiWrapper.showToastMessage('Please select gender'.tr);
+        genderSelected = false;
+      }
+      print("aca ${gender} ${genderSelected}");
       ApiWrapper.showToastMessage("Please fill required field!".tr);
     }
   }

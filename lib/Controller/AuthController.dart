@@ -69,14 +69,15 @@ class AuthController extends GetxController {
      */
   }
 
-  Future<void> registrarUsuario({
-    required String email,
-    required String nombreUsuario,
-    required String nombre,
-    required String apellido,
-    required int? telefono,
-    required String password,
-  }) async {
+  Future<void> registrarUsuario(
+      {required String email,
+      required String nombreUsuario,
+      required String nombre,
+      required String apellido,
+      required int? telefono,
+      required String password,
+      required int? edad,
+      required String? gender}) async {
     final Uri url = Uri.parse('http://216.225.205.93:3000/api/auth/register');
 
     final response = await http.put(
@@ -92,7 +93,9 @@ class AuthController extends GetxController {
         'telefono': telefono,
         'password': password,
         "status_register": 2,
-        "status_active": true
+        "status_active": true,
+        "edad": edad,
+        "gender": gender
       }),
     );
 
@@ -125,7 +128,7 @@ class AuthController extends GetxController {
     } else {
       // Si la solicitud falla, imprime el mensaje de error
       print('Error: ${response.reasonPhrase}');
-      print('Código de error: ${response.statusCode}');
+      print('Código de error: ${response.statusCode} ${response.headers['location']}');
     }
   }
 
@@ -231,7 +234,8 @@ class AuthController extends GetxController {
           ApiWrapper.showToastMessage(message);
 
           // Navega a la pantalla Bottombar
-         Get.offAll(() => const Bottombar()); // Esto reemplaza toda la pila de navegación y va directamente a Bottombar
+          Get.offAll(() =>
+              const Bottombar()); // Esto reemplaza toda la pila de navegación y va directamente a Bottombar
         } else {
           print('Error: $message');
         }
@@ -319,7 +323,7 @@ class AuthController extends GetxController {
         //Token
         final token = message[0]['token'];
         //ID del usuario
-        final dataUser= jsonResponse['dataUser'];
+        final dataUser = jsonResponse['dataUser'];
         final id = dataUser['id'];
         final fechaExpiracion = message[0]['fechaExpiracion'];
 
@@ -328,14 +332,13 @@ class AuthController extends GetxController {
         print('fechaExpiracion recibido: $fechaExpiracion');
 
         UserModel userModelData = UserModel(
-          userId: dataUser['id'],
-          userName: dataUser['nombre_usuario'],
-          name: dataUser['nombre'],
-          lastName: dataUser['apellido'], 
-          email: dataUser['email'], 
-          cellPhone: dataUser['telefono']
-          );
-        
+            userId: dataUser['id'],
+            userName: dataUser['nombre_usuario'],
+            name: dataUser['nombre'],
+            lastName: dataUser['apellido'],
+            email: dataUser['email'],
+            cellPhone: dataUser['telefono']);
+
         await UserPreferences.saveUser(userModelData);
 
         // Guardar token e ID del usuario usando UserPreferences

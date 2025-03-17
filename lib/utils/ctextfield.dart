@@ -27,6 +27,7 @@ class Customtextfild {
       // Elimina la altura fija
       // height: 45,
       child: TextFormField(
+        
         controller: controller,
         onChanged: onChanged,
         validator: validator,
