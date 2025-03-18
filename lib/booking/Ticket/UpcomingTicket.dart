@@ -71,7 +71,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
   final start_time = TextEditingController();
   final end_time = TextEditingController();
   final event_about = TextEditingController();
-  final event_about_short = TextEditingController();
+ // final event_about_short = TextEditingController();
   final price = TextEditingController();
   final lat = TextEditingController();
   final long = TextEditingController();
@@ -184,19 +184,23 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
 
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
 
-                CustomShortTextArea.textArea(
-                  controller: event_about_short,
-                  name1: "Short description".tr,
-                  labelclr: Colors.grey,
-                  textcolor: notifire.getwhitecolor,
-                  prefixIcon: Image.asset(
-                    "image/descripcion.png",
-                    scale: 3.5,
-                    //color: notifire.textcolor
-                  ),
-                  context: context,
-                ),
-                buildEmptyFieldWarning(event_about_short, verificar),
+                // Code to create a text area for a short description
+
+                // CustomShortTextArea.textArea(
+                //   controller: event_about_short,
+                //   name1: "Short description".tr,
+                //   labelclr: Colors.grey,
+                //   textcolor: notifire.getwhitecolor,
+                //   prefixIcon: Image.asset(
+                //     "image/descripcion.png",
+                //     scale: 3.5,
+                //     //color: notifire.textcolor
+                //   ),
+                //   context: context,
+                // ),
+                // buildEmptyFieldWarning(event_about_short, verificar),
+
+
                 SizedBox(
                     height: MediaQuery.of(context).size.height /
                         40), // Ajustar altura según necesidad
@@ -530,7 +534,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
       horaInicio: start_time.text,
       horaFin: end_time.text,
       precio: price.text,
-      descripcionBreve: event_about_short.text,
+      descripcionBreve: "",//event_about_short.text,
       descripcion: event_about.text,
       galeriaImagen1: event_gallery.isNotEmpty ? event_gallery[0] : null,
       galeriaImagen2: event_gallery.length > 1 ? event_gallery[1] : null,
@@ -558,7 +562,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
 // Helper method to validate all required fields
 String? _validateFields() {
   if (event_title.text.isEmpty) return 'Event title is required'.tr;
-  if (event_about_short.text.isEmpty) return 'Short description is required'.tr;
+ // if (event_about_short.text.isEmpty) return 'Short description is required'.tr;
   if (event_about.text.isEmpty) return 'Event description is required'.tr;
   if (start_dateController.text.isEmpty) return 'Start date is required'.tr;
   if (end_dateController.text.isEmpty) return 'End date is required'.tr;
