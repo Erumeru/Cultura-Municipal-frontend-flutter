@@ -98,7 +98,7 @@ class _BottombarState extends State<Bottombar> {
                     label: 'Map'.tr),
                 BottomNavigationBarItem(
                   icon: Image.asset(Images.rectangle,
-                      color: _selectedIndex == 3
+                      color: _selectedIndex == 2
                           ? buttonColor
                           : notifire.bottommenucolore,
                       height: MediaQuery.of(context).size.height / 35),
@@ -106,7 +106,7 @@ class _BottombarState extends State<Bottombar> {
                 ),
                 BottomNavigationBarItem(
                     icon: Image.asset(Images.calendar,
-                        color: _selectedIndex == 2
+                        color: _selectedIndex == 3
                             ? buttonColor
                             : notifire.bottommenucolore,
                         height: MediaQuery.of(context).size.height / 35),
