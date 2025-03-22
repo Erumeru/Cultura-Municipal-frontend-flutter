@@ -1611,8 +1611,15 @@ class LocaleString extends Translations {
           "Municipality is required": "El municipio es obligatorio",
           "Category is required": "La categoría es obligatoria",
           "Target audience is required": "El público objetivo es obligatorio",
-          "Event cover image is required": "La imagen de portada del evento es obligatoria",
-          "Event image is required": "La imagen del evento es obligatoria"
+          "Event cover image is required":
+              "La imagen de portada del evento es obligatoria",
+          "Event image is required": "La imagen del evento es obligatoria",
+          "Age": "Edad",
+          "Gender": "Género",
+          "Male": "Masculino",
+          "Female": "Femenino",
+          "Other": "Otro",
+          "User name/Enterprise/Association": "Nombre de usuario/Empresa/Asociación"
         },
 
         'tr_IN': {

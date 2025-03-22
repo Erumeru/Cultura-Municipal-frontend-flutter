@@ -118,34 +118,6 @@ class _SignupState extends State<Signup> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: height / 40),
-                              Customtextfild.textField(
-                                controller: email,
-                                name1: "Email".tr,
-                                labelclr: Colors.grey,
-                                textcolor: notifire.getwhitecolor,
-                                prefixIcon: Image.asset("image/Message.png",
-                                    scale: 3.5, color: notifire.textcolor),
-                                context: context,
-                              ),
-
-                              buildEmptyFieldWarning(email, verificar),
-                              SizedBox(height: height / 100),
-
-                              Customtextfild.textField(
-                                controller: semail,
-                                name1: "Confirm email".tr,
-                                labelclr: Colors.grey,
-                                textcolor: notifire.getwhitecolor,
-                                prefixIcon: Image.asset("image/Message.png",
-                                    scale: 3.5, color: notifire.textcolor),
-                                context: context,
-                              ),
-                              buildEmptyFieldWarning(semail, verificar),
-                              buildNoMatchEmailFieldWarning(
-                                  email, semail, verificar),
-                              SizedBox(height: height / 100),
-
                               Customtextfild.textField(
                                 controller: name,
                                 name1: "Nombre".tr,
@@ -157,7 +129,6 @@ class _SignupState extends State<Signup> {
                               ),
                               buildEmptyFieldWarning(name, verificar),
                               SizedBox(height: height / 100),
-
                               Customtextfild.textField(
                                 controller: lastname,
                                 name1: "Last name".tr,
@@ -170,103 +141,17 @@ class _SignupState extends State<Signup> {
                               ),
                               buildEmptyFieldWarning(lastname, verificar),
                               SizedBox(height: height / 100),
-
-                              Row(
-                                children: [
-                                  Expanded(
-                                      flex: 4,
-                                      child: Column(
-                                        children: [
-                                          Customtextfild.textField(
-                                            controller: userName,
-                                            name1: "User name".tr,
-                                            labelclr: Colors.grey,
-                                            textcolor: notifire.getwhitecolor,
-                                            prefixIcon: Image.asset(
-                                                "image/Profile.png",
-                                                scale: 3.5,
-                                                color: notifire.textcolor),
-                                            context: context,
-                                          ),
-                                        ],
-                                      )),
-                                  Expanded(
-                                    flex: 1,
-                                    child: IconButton(
-                                        onPressed: () => {
-                                              setState(() {
-                                                genderSelected = true;
-
-                                                gender = "Male";
-                                              })
-                                            },
-                                        icon: Icon(
-                                          Icons.male,
-                                          color: gender == "Male"
-                                              ? Colors.blue
-                                              : Colors.grey,
-                                        )),
-                                    //     if (gender == "Female") Text("!".tr)
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: IconButton(
-                                        onPressed: () => {
-                                              setState(() {
-                                                genderSelected = true;
-                                                gender = "Female";
-                                              })
-                                            },
-                                        icon: Icon(
-                                          Icons.female,
-                                          color: gender == "Female"
-                                              ? Colors.pink
-                                              : Colors.grey,
-                                        )),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          genderSelected = true;
-                                          gender = "Other";
-                                        });
-                                      },
-                                      icon: Icon(
-                                        Icons.transgender,
-                                        color: gender == "Other"
-                                            ? Colors.purple
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              Customtextfild.textField(
+                                controller: userName,
+                                name1: "User name/Enterprise/Association".tr,
+                                labelclr: Colors.grey,
+                                textcolor: notifire.getwhitecolor,
+                                prefixIcon: Image.asset("image/Profile.png",
+                                    scale: 3.5, color: notifire.textcolor),
+                                context: context,
                               ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 4,
-                                    child: buildEmptyFieldWarning(
-                                        userName, verificar),
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: genderSelected == false
-                                        ? Align(
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              "!".tr,
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ),
-                                          )
-                                        : SizedBox(),
-                                  )
-                                ],
-                              ),
+                              buildEmptyFieldWarning(userName, verificar),
                               SizedBox(height: height / 100),
-
                               Customtextfild.textField(
                                 controller: age,
                                 name1: "Age".tr,
@@ -279,7 +164,50 @@ class _SignupState extends State<Signup> {
                               ),
                               buildEmptyFieldWarning(age, verificar),
                               SizedBox(height: height / 100),
-
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Gender".tr, style: TextStyle(color: notifire.textcolor)),
+                                  Row(
+                                    children: [
+                                      Radio(
+                                        value: "Male",
+                                        groupValue: gender,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            genderSelected = true;
+                                            gender = value.toString();
+                                          });
+                                        },
+                                      ),
+                                      Text("Male".tr),
+                                      Radio(
+                                        value: "Female",
+                                        groupValue: gender,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            genderSelected = true;
+                                            gender = value.toString();
+                                          });
+                                        },
+                                      ),
+                                      Text("Female".tr),
+                                      Radio(
+                                        value: "Other",
+                                        groupValue: gender,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            genderSelected = true;
+                                            gender = value.toString();
+                                          });
+                                        },
+                                      ),
+                                      Text("Other".tr),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: height / 100),
                               Ink(
                                 child: Row(
                                   mainAxisAlignment:
@@ -304,9 +232,7 @@ class _SignupState extends State<Signup> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
+                                    const SizedBox(width: 8),
                                     Expanded(
                                       child: Customtextfild.textField(
                                         controller: number,
@@ -320,7 +246,30 @@ class _SignupState extends State<Signup> {
                                   ],
                                 ),
                               ),
-                              //buildEmptyFieldWarning(number, verificar),
+                              SizedBox(height: height / 100),
+                              Customtextfild.textField(
+                                controller: email,
+                                name1: "Email".tr,
+                                labelclr: Colors.grey,
+                                textcolor: notifire.getwhitecolor,
+                                prefixIcon: Image.asset("image/Message.png",
+                                    scale: 3.5, color: notifire.textcolor),
+                                context: context,
+                              ),
+                              buildEmptyFieldWarning(email, verificar),
+                              SizedBox(height: height / 100),
+                              Customtextfild.textField(
+                                controller: semail,
+                                name1: "Confirm email".tr,
+                                labelclr: Colors.grey,
+                                textcolor: notifire.getwhitecolor,
+                                prefixIcon: Image.asset("image/Message.png",
+                                    scale: 3.5, color: notifire.textcolor),
+                                context: context,
+                              ),
+                              buildEmptyFieldWarning(semail, verificar),
+                              buildNoMatchEmailFieldWarning(
+                                  email, semail, verificar),
                               SizedBox(height: height / 100),
                               Customtextfild2.textField(
                                 fpassword,
@@ -370,7 +319,6 @@ class _SignupState extends State<Signup> {
                               buildNoMatchPasswordFieldWarning(
                                   fpassword, spassword, verificar),
                               SizedBox(height: height / 100),
-                              SizedBox(height: Get.height * 0.02),
                               Row(
                                 children: [
                                   Ink(
@@ -640,8 +588,7 @@ class _SignupState extends State<Signup> {
             fpassword.text.isNotEmpty &&
             spassword.text.isNotEmpty &&
             age.text.isNotEmpty &&
-            (gender != null && 
-                genderSelected != false)
+            (gender != null && genderSelected != false)
         // &&        referral.text.isNotEmpty
         ) {
       if ((RegExp(
