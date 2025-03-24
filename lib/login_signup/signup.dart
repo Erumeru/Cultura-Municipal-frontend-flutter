@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_final_fields, body_might_complete_normally_nullable, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, deprecated_member_use, avoid_print
 
 //import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:goevent2/Api/ApiWrapper.dart';
 import 'package:goevent2/login_signup/login.dart';
 import 'package:goevent2/profile/loream.dart';
 import 'package:goevent2/utils/AppWidget.dart';
+import 'package:goevent2/utils/MunicipiosComboBox.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Controller/AuthController.dart';
@@ -41,6 +44,7 @@ class _SignupState extends State<Signup> {
   final spassword = TextEditingController();
   final referral = TextEditingController();
   final age = TextEditingController();
+  final municipality = TextEditingController();
   bool isLoading = false;
   String? _selectedCountryCode = '+52';
   final login = Get.put(AuthController());
@@ -167,7 +171,9 @@ class _SignupState extends State<Signup> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Gender".tr, style: TextStyle(color: notifire.textcolor)),
+                                  Text("Gender".tr,
+                                      style:
+                                          TextStyle(color: notifire.textcolor)),
                                   Row(
                                     children: [
                                       Radio(
@@ -246,6 +252,17 @@ class _SignupState extends State<Signup> {
                                   ],
                                 ),
                               ),
+                              SizedBox(height: height / 100),
+                              MunicipiosComboBox(
+                                labelColor: Colors.grey,
+                                textColor: notifire.getwhitecolor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    municipality.text = value;
+                                  });
+                                },
+                              ),
+                              buildEmptyFieldWarning(municipality, verificar),
                               SizedBox(height: height / 100),
                               Customtextfild.textField(
                                 controller: email,
@@ -588,6 +605,7 @@ class _SignupState extends State<Signup> {
             fpassword.text.isNotEmpty &&
             spassword.text.isNotEmpty &&
             age.text.isNotEmpty &&
+            municipality.text.isNotEmpty &&
             (gender != null && genderSelected != false)
         // &&        referral.text.isNotEmpty
         ) {
@@ -618,6 +636,7 @@ class _SignupState extends State<Signup> {
               print('contrasna: ${fpassword.text}');
               print('edad: ${age.text}');
               print('genero: ${gender}');
+              print('municipio ${municipality.text}');
 
               try {
                 int? telefono;
@@ -642,6 +661,7 @@ class _SignupState extends State<Signup> {
                     apellido: lastname.text,
                     password: fpassword.text,
                     edad: edad,
+                    municipio: int.parse(municipality.text),
                     gender: gender);
               } catch (e) {
                 ApiWrapper.showToastMessage(

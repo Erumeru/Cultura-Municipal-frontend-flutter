@@ -77,6 +77,7 @@ class AuthController extends GetxController {
       required int? telefono,
       required String password,
       required int? edad,
+      required int municipio,
       required String? gender}) async {
     final Uri url = Uri.parse('http://216.225.205.93:3000/api/auth/register');
 
@@ -95,7 +96,8 @@ class AuthController extends GetxController {
         "status_register": 2,
         "status_active": true,
         "edad": edad,
-        "gender": gender
+        "gender": gender,
+        "idMunicipio": municipio
       }),
     );
 
@@ -128,7 +130,8 @@ class AuthController extends GetxController {
     } else {
       // Si la solicitud falla, imprime el mensaje de error
       print('Error: ${response.reasonPhrase}');
-      print('Código de error: ${response.statusCode} ${response.headers['location']}');
+      print(
+          'Código de error: ${response.statusCode} ${response.headers['location']}');
     }
   }
 
