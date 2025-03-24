@@ -235,10 +235,12 @@ class _EventsDetailsState extends State<EventsDetails> {
     ev_gallery.add(galeriaImagen);
   }
 
-  void agregarImagenesAGaleria() async {
-    
+  Future<void> agregarImagenesAGaleria() async {
+    List<String> tempGallery=[];
+
     if (await validImageAvailability(widget.evento.galeriaImagen1!)) {
-      addImageToGallery(widget.evento.galeriaImagen1, event_gallery);
+      tempGallery.add(widget.evento.galeriaImagen1!);
+      //addImageToGallery(widget.evento.galeriaImagen1, event_gallery);
     }
 
     // if (widget.evento.galeriaImagen1!.isNotEmpty) {
@@ -246,7 +248,8 @@ class _EventsDetailsState extends State<EventsDetails> {
     // }
 
     if (await validImageAvailability(widget.evento.galeriaImagen2!)) {
-      addImageToGallery(widget.evento.galeriaImagen2, event_gallery);
+      tempGallery.add(widget.evento.galeriaImagen2!);
+      //addImageToGallery(widget.evento.galeriaImagen2, event_gallery);
     }
 
     // if (widget.evento.galeriaImagen2!.isNotEmpty) {
@@ -257,15 +260,24 @@ class _EventsDetailsState extends State<EventsDetails> {
     final isImage3Valid =
         await validImageAvailability(widget.evento.galeriaImagen3!);
     if (isImage3Valid) {
-      event_gallery.add(widget.evento.galeriaImagen3);
+      tempGallery.add(widget.evento.galeriaImagen3!);
+      //event_gallery.add(widget.evento.galeriaImagen3);
     }
 
     if (widget.evento.imagenEvento.isNotEmpty) {
-      event_gallery.add(widget.evento.imagenEvento);
+      tempGallery.add(widget.evento.imagenEvento);
+      //event_gallery.add(widget.evento.imagenEvento);
     }
     if (widget.evento.imagenPortadaEvento.isNotEmpty) {
-      event_gallery.add(widget.evento.imagenPortadaEvento);
+      tempGallery.add(widget.evento.imagenPortadaEvento);
+      //event_gallery.add(widget.evento.imagenPortadaEvento);
     }
+
+    print('fotos de la galeria: $event_gallery');
+
+    setState(() {
+    event_gallery = tempGallery;
+  });
   }
 
   @override
@@ -275,12 +287,16 @@ class _EventsDetailsState extends State<EventsDetails> {
     //walletrefar();
     getPackage();
     eventDetailApi();
+    cargarDatos();
     getdarkmodepreviousstate();
-    cargarEventosFavoritosPorId();
     obtenerNombrePublicoObjetivo(widget.evento.idPublicoObjetivo);
     print('id de usuario es: ${widget.evento.idUsuario}');
     print('organizador es: ${widget.evento.organizador}');
-    agregarImagenesAGaleria();
+  }
+
+  Future<void> cargarDatos() async {
+    await cargarEventosFavoritosPorId();
+    await agregarImagenesAGaleria();
   }
 
   void getPackage() async {
@@ -906,10 +922,22 @@ class _EventsDetailsState extends State<EventsDetails> {
                               width: Get.width,
                               child: ListView.builder(
                                 itemCount: event_gallery.length,
-                                shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (ctx, i) {
-                                  return galeryEvent(event_gallery, i);
+                                  print('length ${event_gallery.length}');
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(ctx,
+                                          MaterialPageRoute(builder: (_) {
+                                        return FullScreenImage(
+                                          imageUrl: event_gallery[i],
+                                          tag: "imagen $i",
+                                        );
+                                      }));
+                                    },
+                                    child: galeryEvent(event_gallery,
+                                        i), // Ensure this widget renders properly
+                                  );
                                 },
                               ),
                             ),
