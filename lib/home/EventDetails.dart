@@ -236,7 +236,7 @@ class _EventsDetailsState extends State<EventsDetails> {
   }
 
   Future<void> agregarImagenesAGaleria() async {
-    List<String> tempGallery=[];
+    List<String> tempGallery = [];
 
     if (await validImageAvailability(widget.evento.galeriaImagen1!)) {
       tempGallery.add(widget.evento.galeriaImagen1!);
@@ -276,8 +276,8 @@ class _EventsDetailsState extends State<EventsDetails> {
     print('fotos de la galeria: $event_gallery');
 
     setState(() {
-    event_gallery = tempGallery;
-  });
+      event_gallery = tempGallery;
+    });
   }
 
   @override
@@ -929,10 +929,11 @@ class _EventsDetailsState extends State<EventsDetails> {
                                     onTap: () {
                                       Navigator.push(ctx,
                                           MaterialPageRoute(builder: (_) {
-                                        return FullScreenImage(
+                                        return InteractiveViewer(
+                                            child: FullScreenImage(
                                           imageUrl: event_gallery[i],
                                           tag: "imagen $i",
-                                        );
+                                        ));
                                       }));
                                     },
                                     child: galeryEvent(event_gallery,
