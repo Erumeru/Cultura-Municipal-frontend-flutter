@@ -587,111 +587,96 @@ class _SignupState extends State<Signup> {
   }
 
   //
-  authSignUp() {
-    print('uhuhuhuhu');
-    FocusScope.of(context).requestFocus(FocusNode());
-    setState(() {
-      verificar = true;
-      // Actualizar el estado según si el campo está vacío o no
-      //isTitleEmpty = isFieldEmpty(event_title);
-    });
+  authSignUp() async {
+  print('uhuhuhuhu');
+  FocusScope.of(context).requestFocus(FocusNode());
 
-    if (name.text.isNotEmpty &&
-            lastname.text.isNotEmpty &&
-            userName.text.isNotEmpty &&
-            email.text.isNotEmpty &&
-            semail.text.isNotEmpty &&
-            //number.text.isNotEmpty &&
-            fpassword.text.isNotEmpty &&
-            spassword.text.isNotEmpty &&
-            age.text.isNotEmpty &&
-            municipality.text.isNotEmpty &&
-            (gender != null && genderSelected != false)
-        // &&        referral.text.isNotEmpty
-        ) {
-      if ((RegExp(
-              r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+\.[a-zA-Z]+")
-          .hasMatch(email.text))) {
-        if (email.text == semail.text) {
-          if (fpassword.text == spassword.text) {
-            if (status == true) {
-              setState(() {
-                isLoading = true;
-              });
-              var register = {
-                "UserName": name.text.trim(),
-                "Usernumber": number.text.trim(),
-                "UserEmail": email.text.trim(),
-                //"Ccode": _selectedCountryCode,
-                "FPassword": fpassword.text.trim(),
-                "SPassword": spassword.text.trim(),
-                //"ReferralCode": referral.text.trim(),
-              };
-              save("User", register);
-              print('email: ${email.text}');
-              print('Nombre: ${name.text}');
-              print('Apellidos: ${lastname.text}');
-              print('Nombre usuario: ${userName.text}');
-              print('Telefono: ${number.text}');
-              print('contrasna: ${fpassword.text}');
-              print('edad: ${age.text}');
-              print('genero: ${gender}');
-              print('municipio ${municipality.text}');
+  setState(() {
+    verificar = true;
+  });
 
-              try {
-                int? telefono;
-                int? edad;
-                if (number.text.isNotEmpty) {
-                  telefono = int.parse(number.text);
-                } else {
-                  telefono =
-                      null; // O el valor predeterminado que prefieras, como 0.
-                }
-                if (age.text.isNotEmpty) {
-                  edad = int.parse(age.text);
-                } else {
-                  edad = null;
-                }
+  if (name.text.isNotEmpty &&
+      lastname.text.isNotEmpty &&
+      userName.text.isNotEmpty &&
+      email.text.isNotEmpty &&
+      semail.text.isNotEmpty &&
+      fpassword.text.isNotEmpty &&
+      spassword.text.isNotEmpty &&
+      age.text.isNotEmpty &&
+      municipality.text.isNotEmpty &&
+      (gender != null && genderSelected != false)) {
+        
+    if (RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        .hasMatch(email.text)) {
+      if (email.text == semail.text) {
+        if (fpassword.text == spassword.text) {
+          if (status == true) {
+            setState(() {
+              isLoading = true;
+            });
 
-                login.registrarUsuario(
-                    email: email.text,
-                    nombreUsuario: userName.text,
-                    nombre: name.text,
-                    telefono: telefono,
-                    apellido: lastname.text,
-                    password: fpassword.text,
-                    edad: edad,
-                    municipio: int.parse(municipality.text),
-                    gender: gender);
-              } catch (e) {
-                ApiWrapper.showToastMessage(
-                    'Error al registrar el usuario. Por favor, verifica los datos ingresados o intentelo de nuevo mas tarde.');
+            try {
+              int? telefono;
+              int? edad;
+              if (number.text.isNotEmpty) {
+                telefono = int.tryParse(number.text);
+              }
+              if (age.text.isNotEmpty) {
+                edad = int.tryParse(age.text);
               }
 
-              print('Chingon');
-            } else {
+              // Prevent registration if edad is null or < 18
+              if (edad == null || edad < 18) {
+                ApiWrapper.showToastMessage(
+                    "Debes ser mayor de edad para registrarte");
+                setState(() {
+                  isLoading = false; // Reset loading state
+                });
+                return;
+              }
+
+              await login.registrarUsuario(
+                email: email.text,
+                nombreUsuario: userName.text,
+                nombre: name.text,
+                telefono: telefono,
+                apellido: lastname.text,
+                password: fpassword.text,
+                edad: edad,
+                municipio: int.parse(municipality.text),
+                gender: gender,
+              );
+            } catch (e) {
               ApiWrapper.showToastMessage(
-                  "Accept terms & Condition is required".tr);
+                  'Error al registrar el usuario. Inténtalo de nuevo más tarde.');
+              print('Error: $e');
+            } finally {
+              setState(() {
+                isLoading = false; // Reset loading state in all cases
+              });
             }
           } else {
-            ApiWrapper.showToastMessage("Password not match".tr);
+            ApiWrapper.showToastMessage(
+                "Debes aceptar los términos y condiciones");
           }
         } else {
-          ApiWrapper.showToastMessage("Email not match".tr);
+          ApiWrapper.showToastMessage("Las contraseñas no coinciden");
         }
       } else {
-        ApiWrapper.showToastMessage('Please enter valid email address'.tr);
+        ApiWrapper.showToastMessage("Los correos electrónicos no coinciden");
       }
     } else {
-      if (gender == null) {
-        print("calando ${gender}");
-        ApiWrapper.showToastMessage('Please select gender'.tr);
-        genderSelected = false;
-      }
-      print("aca ${gender} ${genderSelected}");
-      ApiWrapper.showToastMessage("Please fill required field!".tr);
+      ApiWrapper.showToastMessage('Por favor, ingresa un correo válido');
     }
+  } else {
+    if (gender == null) {
+      genderSelected = false;
+      ApiWrapper.showToastMessage('Por favor, selecciona un género');
+    }
+    ApiWrapper.showToastMessage("Por favor, completa todos los campos");
   }
+}
+
 
 /*
   Future<void> verifyPhone(String number) async {
