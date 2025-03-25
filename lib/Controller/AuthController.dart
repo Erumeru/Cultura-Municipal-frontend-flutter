@@ -79,11 +79,10 @@ class AuthController extends GetxController {
       required int? edad,
       required int municipio,
       required String? gender}) async {
-
-        if (edad!=null && edad<18){
-          ApiWrapper.showToastMessage("Debes ser mayor de edad para registrarte");
-          return;
-        }
+    if (edad != null && edad < 18) {
+      ApiWrapper.showToastMessage("Debes ser mayor de edad para registrarte");
+      return;
+    }
 
     final Uri url = Uri.parse('http://216.225.205.93:3000/api/auth/register');
 
@@ -132,6 +131,7 @@ class AuthController extends GetxController {
         // update(); // Descomentar si es necesario
       } else {
         print('Error: $message');
+        ApiWrapper.showToastMessage("$message");
       }
     } else {
       // Si la solicitud falla, imprime el mensaje de error
