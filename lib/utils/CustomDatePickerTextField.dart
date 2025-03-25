@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +26,6 @@ class CustomDatePickerTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final notifire = Provider.of<ColorNotifire>(context, listen: true);
-
     return GestureDetector(
       onTap: () {
         _selectDate(context);
@@ -65,7 +65,10 @@ class CustomDatePickerTextField extends StatelessWidget {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+
+
     final DateTime? pickedDate = await showDatePicker(
+      locale: Get.locale,
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),

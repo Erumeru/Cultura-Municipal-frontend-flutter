@@ -220,7 +220,7 @@ class _ProfileState extends State<Profile> {
                     ),
                     SizedBox(height: Get.height * 0.02),
                     settingWidget(
-                        tital: "Langauge".tr,
+                        tital: "Language".tr,
                         image: "image/langauge.png",
                         onTap: bottomsheet),
                     SizedBox(height: Get.height * 0.02),

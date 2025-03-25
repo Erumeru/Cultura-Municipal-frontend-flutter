@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:goevent2/langauge_translate.dart';
@@ -25,7 +26,9 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => ColorNotifire())],
-    child: MaterialApp( // Envuelve GetMaterialApp con MaterialApp aquí
+    child: MaterialApp(
+      // Envuelve GetMaterialApp con MaterialApp aquí
+      
       title: 'EvSon'.tr,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -39,7 +42,15 @@ void main() async {
       ),
       home: GetMaterialApp(
         translations: LocaleString(),
-        locale: const Locale('es', 'ES'),
+        localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+         const Locale('en'),
+         const Locale('es')
+       ],
         home: const Directionality(
           textDirection: TextDirection.ltr, // set this property
           child: Spleshscreen(),
@@ -49,13 +60,8 @@ void main() async {
   ));
 }
 
-
 // 9284798223
 // 123
-
-
-
-
 
 // NOTIFICATION CODE  :-----------------
 
@@ -106,13 +112,11 @@ void listenFCM() async {
               presentBadge: true,
             ),
           ),
-          
           payload: jsonEncode({
             "name": message.data["name"],
             "id": message.data["id"],
             "propic": message.data["propic"]
-          })
-          );
+          }));
     }
   });
 }
@@ -121,13 +125,12 @@ Future<void> initializeNotifications() async {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
+      AndroidInitializationSettings('@mipmap/ic_launcher');
   final InitializationSettings initializationSettings =
-  InitializationSettings(android: initializationSettingsAndroid);
+      InitializationSettings(android: initializationSettingsAndroid);
 
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
-
     onSelectNotification: (String? payload) async {
       if (payload != null) {
         Map data = jsonDecode(payload);
@@ -140,7 +143,6 @@ Future<void> initializeNotifications() async {
         ));
       }
     },
-
   );
 }
 
@@ -161,7 +163,7 @@ void loadFCM() async {
     /// default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     /// Update the iOS foreground notification presentation options to allow

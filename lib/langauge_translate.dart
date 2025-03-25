@@ -1619,7 +1619,7 @@ class LocaleString extends Translations {
           "Male": "Masculino",
           "Female": "Femenino",
           "Other": "Otro",
-          "User name/Enterprise/Association": "Nombre de usuario/Empresa/Asociación"
+          "User name/Enterprise/Association": "Nombre de usuario/Empresa/Asociación",
         },
 
         'tr_IN': {

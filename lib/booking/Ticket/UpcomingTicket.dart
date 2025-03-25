@@ -237,6 +237,7 @@ class _UpcomingTicketState extends State<UpcomingTicket> {
 
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 CustomDatePickerTextField(
+                  
                   controller: end_dateController,
                   name1: "End date".tr,
                   labelclr: Colors.grey,
