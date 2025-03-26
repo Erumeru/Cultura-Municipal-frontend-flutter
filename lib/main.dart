@@ -28,7 +28,16 @@ void main() async {
     providers: [ChangeNotifierProvider(create: (_) => ColorNotifire())],
     child: MaterialApp(
       // Envuelve GetMaterialApp con MaterialApp aquí
-      
+      // Se repiten los mismos locales de GetMaterialApp por el anidado
+      supportedLocales: [
+         const Locale('en'),
+         const Locale('es')
+       ],
+       localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       title: 'EvSon'.tr,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

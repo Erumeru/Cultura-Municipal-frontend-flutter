@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +42,8 @@ class CustomTimePickerTextField extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Image.asset( // Utilizar Image.asset para mostrar la imagen
+              Image.asset(
+                // Utilizar Image.asset para mostrar la imagen
                 iconImagePath,
                 //color: labelclr, // Puedes aplicar el color si es necesario
                 width: 24, // Ajusta el ancho según sea necesario
@@ -68,6 +70,13 @@ class CustomTimePickerTextField extends StatelessWidget {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+      return Localizations.override(
+        context: context,
+        locale:  Locale(Get.locale!.languageCode , 'US') ?? Locale('en', 'US'), // ✅ Apply the correct locale
+        child: MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false), child: child!),
+      );
+    },
     );
 
     if (pickedTime != null) {
@@ -89,5 +98,3 @@ class CustomTimePickerTextField extends StatelessWidget {
     }
   }
 }
-
-
