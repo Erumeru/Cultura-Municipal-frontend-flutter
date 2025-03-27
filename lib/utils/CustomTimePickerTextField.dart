@@ -73,8 +73,9 @@ class CustomTimePickerTextField extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
       return Localizations.override(
         context: context,
-        locale:  Locale(Get.locale!.languageCode , 'US') ?? Locale('en', 'US'), // ✅ Apply the correct locale
-        child: MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false), child: child!),
+locale: Get.locale != null 
+    ? Locale(Get.locale!.languageCode, 'US') 
+    : const Locale('en', 'US'),        child: MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false), child: child!),
       );
     },
     );
