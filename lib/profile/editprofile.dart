@@ -61,10 +61,12 @@ class _EditState extends State<Edit> {
       userName.text = userData?.userName ?? '';
       name.text = userData?.name ?? '';
       lastName.text = userData?.lastName ?? '';
-      number.text = userData?.cellPhone.toString() ?? '';
+      number.text = userData?.cellPhone?.toString() ?? '';
       email.text = userData?.email ?? '';
       password.text = "12345";
       networkimage = "hola";
+
+      print("telefonod ${number.text}");
     });
   }
 
