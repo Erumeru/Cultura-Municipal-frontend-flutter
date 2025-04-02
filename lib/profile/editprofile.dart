@@ -130,11 +130,13 @@ class _EditState extends State<Edit> {
   Widget build(BuildContext context) {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return Scaffold(
+      
       backgroundColor: notifire.backgrounde,
       floatingActionButton: SizedBox(
         height: 45,
-        width: 410,
+        width: MediaQuery.of(context).size.width*0.76,
         child: FloatingActionButton(
+          backgroundColor: Colors.transparent,
           onPressed: () {
             if ((RegExp(
                     r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
