@@ -64,7 +64,7 @@ class ApiWrapper {
       print("Exeption----- $e");
     }
   }
-static Future<Map<String, dynamic>?> patchData(String url, Map<String, dynamic> body) async {
+static Future<http.Response?> patchData(String url, Map<String, dynamic> body) async {
   try {
     final String? token = await UserPreferences.getToken(); // Obtiene el token
 
@@ -83,7 +83,7 @@ static Future<Map<String, dynamic>?> patchData(String url, Map<String, dynamic> 
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return response;
     } else {
       print("Error en PATCH (${response.statusCode}): ${response.body}");
       return null;

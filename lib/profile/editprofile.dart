@@ -56,7 +56,6 @@ class _EditState extends State<Edit> {
   Future<void> loadUserData() async {
     // Fetch user data from preferences
     userData = await UserPreferences.getUser();
-
     setState(() {
       userName.text = userData?.userName ?? '';
       name.text = userData?.name ?? '';
@@ -79,7 +78,6 @@ class _EditState extends State<Edit> {
     //print("Usename " + getData.read("UserLogin")["name"]);
     //print(getData.read("UserLogin")["id"]);
 
-
     // getData.read("UserLogin") != null
     //     ? setState(() {
     //         name.text = getData.read("UserLogin")["name"] ?? "";
@@ -94,7 +92,6 @@ class _EditState extends State<Edit> {
     //             : const SizedBox();
     //       })
     //     : null;
-
   }
 
 //! network base64Image
@@ -132,11 +129,10 @@ class _EditState extends State<Edit> {
   Widget build(BuildContext context) {
     notifire = Provider.of<ColorNotifire>(context, listen: true);
     return Scaffold(
-      
       backgroundColor: notifire.backgrounde,
       floatingActionButton: SizedBox(
         height: 45,
-        width: MediaQuery.of(context).size.width*0.76,
+        width: MediaQuery.of(context).size.width * 0.76,
         child: FloatingActionButton(
           backgroundColor: Colors.transparent,
           onPressed: () {
@@ -264,27 +260,28 @@ class _EditState extends State<Edit> {
               SizedBox(height: height / 60),
               Customtextfild3.textField(
                   email,
-                  notifire.getwhitecolor,
+                  Colors.grey.shade600,
                   "Email".tr,
                   width,
                   TextInputType.name,
                   50,
                   TextAlign.start,
-                  false,
-                  context: context),
+                  true,
+                  context: context,
+                  ),
               SizedBox(height: height / 60),
               Customtextfild3.textField(
                   number,
                   notifire.getwhitecolor,
                   "Phone (optional)".tr,
                   width,
-                  TextInputType.name,
+                  TextInputType.number,
                   50,
                   TextAlign.start,
-                  true,
+                  false,
                   context: context),
               SizedBox(height: height / 60),
-              
+
               //Text for password
               // Customtextfild3.textField(
               //     password,
@@ -331,50 +328,99 @@ class _EditState extends State<Edit> {
     } else {}
   }
 
-  Map<String, dynamic> getUpdatedFields(UserModel? userData) {
+Map<String, dynamic> getUpdatedFields(UserModel? userData) {
   Map<String, dynamic> updatedFields = {};
+  String errorMessage = '';
 
-  if (userName.text != (userData?.userName ?? '')) {
-    updatedFields["nombreUsuario"] = userName.text;
+  // Username validation
+  if (userName.text.trim().isEmpty) {
+    errorMessage = 'El nombre de usuario no puede estar vacío';
+  } else if (userName.text != (userData?.userName ?? '')) {
+    updatedFields["nombreUsuario"] = userName.text.trim();
   }
-  if (name.text != (userData?.name ?? '')) {
-    updatedFields["nombre"] = name.text;
+
+  // Name validation
+  if (name.text.trim().isEmpty) {
+    errorMessage = 'El nombre no puede estar vacío';
+  } else if (name.text != (userData?.name ?? '')) {
+    updatedFields["nombre"] = name.text.trim();
   }
-  if (lastName.text != (userData?.lastName ?? '')) {
-    updatedFields["apellido"] = lastName.text;
+
+  // LastName validation
+  if (lastName.text.trim().isEmpty) {
+    errorMessage = 'El apellido no puede estar vacío';
+  } else if (lastName.text != (userData?.lastName ?? '')) {
+    updatedFields["apellido"] = lastName.text.trim();
   }
-  if (number.text != (userData?.cellPhone?.toString() ?? '')) {
-    updatedFields["telefono"] = int.tryParse(number.text) ?? userData?.cellPhone;
+
+  // Phone validation (optional)
+  if (number.text.isNotEmpty) {
+    if (number.text != (userData?.cellPhone?.toString())) {
+      // Validate phone format if needed
+      final phoneNumber = int.tryParse(number.text);
+      if (phoneNumber != null) {
+        updatedFields["telefono"] = phoneNumber;
+      }
+    }
   }
-  if (email.text != (userData?.email ?? '')) {
-    updatedFields["email"] = email.text;
+
+  // If there are validation errors, show message and return empty map
+  if (errorMessage.isNotEmpty) {
+    ApiWrapper.showToastMessage(errorMessage);
+    return {};
   }
-  
+
   return updatedFields;
 }
 
+
   void saveProfile() {
-  var updatedFields = getUpdatedFields(userData);
-  print('los datos seran : $updatedFields     el id ${userData?.userId}');
-  if (updatedFields.isEmpty) {
-    ApiWrapper.showToastMessage("No hay cambios para actualizar.");
-    return;
+    var updatedFields = getUpdatedFields(userData);
+    print('updated fields $updatedFields');
+    if (updatedFields.isEmpty) {
+      ApiWrapper.showToastMessage("No hay cambios para actualizar.");
+      return;
+    }
+
+    log(updatedFields.toString(), name: "Updated Fields ======== >>>>> ");
+
+    ApiWrapper.patchData(
+            "http://216.225.205.93:3000/api/usuarios/${userData?.userId}",
+            updatedFields)
+        .then((response) {
+      if ((response != null ) && (response.statusCode == 200)) {
+        final decodedResponse= jsonDecode(response.body);
+        if ((decodedResponse['rta'] == true)) {
+          setState(() {});
+          log(decodedResponse.toString(), name: "Response Data");
+
+          // Update the user data in preferences
+          createUpdatedUserModel(userData, updatedFields);
+
+          //Get.back();
+          ApiWrapper.showToastMessage(decodedResponse["message"]);
+        } else {
+          ApiWrapper.showToastMessage(decodedResponse["message"]);
+        }
+      }
+    });
   }
 
-  log(updatedFields.toString(), name: "Updated Fields ======== >>>>> ");
+  Future<UserModel> createUpdatedUserModel(
+      UserModel? currentUser, Map<String, dynamic> updatedFields) {
+    // Create a new UserModel with existing data
+    UserModel updatedUser = UserModel(
+      userId: currentUser!.userId,
+      userName: updatedFields['nombreUsuario'] ?? currentUser.userName,
+      name: updatedFields['nombre'] ?? currentUser.name,
+      lastName: updatedFields['apellido'] ?? currentUser.lastName,
+      cellPhone: updatedFields['telefono'] ?? currentUser.cellPhone,
+      email: currentUser.email,
+    );
 
-  ApiWrapper.patchData("http://216.225.205.93:3000/api/usuarios/${userData?.userId}", updatedFields).then((val) {
-    if ((val != null) && (val.isNotEmpty)) {
-      if ((val['ResponseCode'] == "200") && (val['Result'] == "true")) {
-        setState(() {});
-        log(val.toString(), name: "Response Data");
-        Get.back();
-        ApiWrapper.showToastMessage(val["ResponseMsg"]);
-      } else {
-        ApiWrapper.showToastMessage(val["ResponseMsg"]);
-      }
-    }
-  });
-}
+    // Save the updated user to preferences
+    UserPreferences.saveUser(updatedUser);
 
+    return Future.value(updatedUser);
+  }
 }

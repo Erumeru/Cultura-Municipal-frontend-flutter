@@ -60,6 +60,7 @@ class UserPreferences {
 
    // Save UserModel
   static Future<void> saveUser(UserModel user) async {
+    print('user a salvar $user');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userJson = jsonEncode(user.toJson());
     await prefs.setString(_userKey, userJson);
