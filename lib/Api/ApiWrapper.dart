@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:goevent2/Api/Config.dart';
+import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/utils/color.dart';
 import 'package:http/http.dart' as http;
 
@@ -63,6 +64,35 @@ class ApiWrapper {
       print("Exeption----- $e");
     }
   }
+static Future<Map<String, dynamic>?> patchData(String url, Map<String, dynamic> body) async {
+  try {
+    final String? token = await UserPreferences.getToken(); // Obtiene el token
+
+    if (token == null || token.isEmpty) {
+      print("Error: Token no encontrado.");
+      return null;
+    }
+
+    var response = await http.patch(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token", // Agrega el token
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print("Error en PATCH (${response.statusCode}): ${response.body}");
+      return null;
+    }
+  } catch (e) {
+    print("Error en la solicitud de actualizacion: $e");
+    return null;
+  }
+}
 
   static finalticketdataPost(appUrl, method) async {
     try {

@@ -331,28 +331,50 @@ class _EditState extends State<Edit> {
     } else {}
   }
 
-  saveProfile() {
-    var body = {
-      "name": name.text.toString(),
-      "password": password.text.toString(),
-      "uid": uID,
-      "email": email.text.toString()
-    };
+  Map<String, dynamic> getUpdatedFields(UserModel? userData) {
+  Map<String, dynamic> updatedFields = {};
 
-    log(body.toString(), name: "Save Update ======== >>>>> ");
-    ApiWrapper.dataPost(Config.profil, body).then((val) {
-      if ((val != null) && (val.isNotEmpty)) {
-        if ((val['ResponseCode'] == "200") && (val['Result'] == "true")) {
-          setState(() {});
-          save("UserLogin", jsonStringToMap(val["UserLogin"].toString()));
-          log(val["UserLogin"].toString());
-
-          Get.back();
-          ApiWrapper.showToastMessage(val["ResponseMsg"]);
-        } else {
-          ApiWrapper.showToastMessage(val["ResponseMsg"]);
-        }
-      }
-    });
+  if (userName.text != (userData?.userName ?? '')) {
+    updatedFields["nombreUsuario"] = userName.text;
   }
+  if (name.text != (userData?.name ?? '')) {
+    updatedFields["nombre"] = name.text;
+  }
+  if (lastName.text != (userData?.lastName ?? '')) {
+    updatedFields["apellido"] = lastName.text;
+  }
+  if (number.text != (userData?.cellPhone?.toString() ?? '')) {
+    updatedFields["telefono"] = int.tryParse(number.text) ?? userData?.cellPhone;
+  }
+  if (email.text != (userData?.email ?? '')) {
+    updatedFields["email"] = email.text;
+  }
+  
+  return updatedFields;
+}
+
+  void saveProfile() {
+  var updatedFields = getUpdatedFields(userData);
+  print('los datos seran : $updatedFields     el id ${userData?.userId}');
+  if (updatedFields.isEmpty) {
+    ApiWrapper.showToastMessage("No hay cambios para actualizar.");
+    return;
+  }
+
+  log(updatedFields.toString(), name: "Updated Fields ======== >>>>> ");
+
+  ApiWrapper.patchData("http://216.225.205.93:3000/api/usuarios/${userData?.userId}", updatedFields).then((val) {
+    if ((val != null) && (val.isNotEmpty)) {
+      if ((val['ResponseCode'] == "200") && (val['Result'] == "true")) {
+        setState(() {});
+        log(val.toString(), name: "Response Data");
+        Get.back();
+        ApiWrapper.showToastMessage(val["ResponseMsg"]);
+      } else {
+        ApiWrapper.showToastMessage(val["ResponseMsg"]);
+      }
+    }
+  });
+}
+
 }
