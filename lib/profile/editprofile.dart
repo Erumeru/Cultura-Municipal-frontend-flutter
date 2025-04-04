@@ -259,16 +259,16 @@ class _EditState extends State<Edit> {
                   context: context),
               SizedBox(height: height / 60),
               Customtextfild3.textField(
-                  email,
-                  Colors.grey.shade600,
-                  "Email".tr,
-                  width,
-                  TextInputType.name,
-                  50,
-                  TextAlign.start,
-                  true,
-                  context: context,
-                  ),
+                email,
+                Colors.grey.shade600,
+                "Email".tr,
+                width,
+                TextInputType.name,
+                50,
+                TextAlign.start,
+                true,
+                context: context,
+              ),
               SizedBox(height: height / 60),
               Customtextfild3.textField(
                   number,
@@ -328,54 +328,86 @@ class _EditState extends State<Edit> {
     } else {}
   }
 
-Map<String, dynamic> getUpdatedFields(UserModel? userData) {
-  Map<String, dynamic> updatedFields = {};
-  String errorMessage = '';
+  Future<Map<String, dynamic>> getUpdatedFields(
+      BuildContext context, UserModel? userData) async {
+    Map<String, dynamic> updatedFields = {};
+    List<String> errorMessages = [];
 
-  // Username validation
-  if (userName.text.trim().isEmpty) {
-    errorMessage = 'El nombre de usuario no puede estar vacío';
-  } else if (userName.text != (userData?.userName ?? '')) {
-    updatedFields["nombreUsuario"] = userName.text.trim();
-  }
+    // Username validation
+    if (userName.text.trim().isEmpty) {
+      errorMessages.add('El nombre de usuario no puede estar vacío');
+    } else if (userName.text != (userData?.userName ?? '')) {
+      updatedFields["nombreUsuario"] = userName.text.trim();
+    }
 
-  // Name validation
-  if (name.text.trim().isEmpty) {
-    errorMessage = 'El nombre no puede estar vacío';
-  } else if (name.text != (userData?.name ?? '')) {
-    updatedFields["nombre"] = name.text.trim();
-  }
+    // Name validation
+    if (name.text.trim().isEmpty) {
+      errorMessages.add('El nombre no puede estar vacío');
+    } else if (name.text != (userData?.name ?? '')) {
+      updatedFields["nombre"] = name.text.trim();
+    }
 
-  // LastName validation
-  if (lastName.text.trim().isEmpty) {
-    errorMessage = 'El apellido no puede estar vacío';
-  } else if (lastName.text != (userData?.lastName ?? '')) {
-    updatedFields["apellido"] = lastName.text.trim();
-  }
+    // LastName validation
+    if (lastName.text.trim().isEmpty) {
+      errorMessages.add('El apellido no puede estar vacío');
+    } else if (lastName.text != (userData?.lastName ?? '')) {
+      updatedFields["apellido"] = lastName.text.trim();
+    }
 
-  // Phone validation (optional)
-  if (number.text.isNotEmpty) {
+    // Phone validation (optional)
     if (number.text != (userData?.cellPhone?.toString())) {
-      // Validate phone format if needed
-      final phoneNumber = int.tryParse(number.text);
-      if (phoneNumber != null) {
-        updatedFields["telefono"] = phoneNumber;
+      print('El número es diferente');
+
+      if (number.text.isEmpty && userData?.cellPhone != null) {
+        // Ask the user if they want to erase their phone number
+        bool? confirmDeletion = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Eliminar número"),
+              content: Text("¿Quieres eliminar tu número de teléfono?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false), // Cancel
+                  child: Text("No"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true), // Confirm
+                  child: Text("Sí"),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirmDeletion == true) {
+          updatedFields["telefono"] = null;
+        }
+      } else {
+        if (RegExp(r'^[0-9]+$').hasMatch(number.text)) {
+          // La cadena contiene solo números
+          final phoneNumber = int.tryParse(number.text);
+          if (phoneNumber != null) {
+            updatedFields["telefono"] = phoneNumber;
+          }
+        } else {
+          // La cadena contiene letras u otros caracteres
+          ApiWrapper.showToastMessage("Teléfono no válido: debe contener solo números.");
+        }
       }
     }
+
+    // If there are validation errors, show message and return empty map
+    if (errorMessages.isNotEmpty) {
+      ApiWrapper.showToastMessage(errorMessages.join("\n"));
+      return {};
+    }
+
+    return updatedFields;
   }
 
-  // If there are validation errors, show message and return empty map
-  if (errorMessage.isNotEmpty) {
-    ApiWrapper.showToastMessage(errorMessage);
-    return {};
-  }
-
-  return updatedFields;
-}
-
-
-  void saveProfile() {
-    var updatedFields = getUpdatedFields(userData);
+  void saveProfile() async {
+    var updatedFields = await getUpdatedFields(context, userData);
     print('updated fields $updatedFields');
     if (updatedFields.isEmpty) {
       ApiWrapper.showToastMessage("No hay cambios para actualizar.");
@@ -388,15 +420,14 @@ Map<String, dynamic> getUpdatedFields(UserModel? userData) {
             "http://216.225.205.93:3000/api/usuarios/${userData?.userId}",
             updatedFields)
         .then((response) {
-      if ((response != null ) && (response.statusCode == 200)) {
-        final decodedResponse= jsonDecode(response.body);
+      if ((response != null) && (response.statusCode == 200)) {
+        final decodedResponse = jsonDecode(response.body);
         if ((decodedResponse['rta'] == true)) {
           setState(() {});
           log(decodedResponse.toString(), name: "Response Data");
 
           // Update the user data in preferences
           createUpdatedUserModel(userData, updatedFields);
-
           //Get.back();
           ApiWrapper.showToastMessage(decodedResponse["message"]);
         } else {
@@ -408,19 +439,28 @@ Map<String, dynamic> getUpdatedFields(UserModel? userData) {
 
   Future<UserModel> createUpdatedUserModel(
       UserModel? currentUser, Map<String, dynamic> updatedFields) {
+    var cellNumber;
+
+    //Check if the cellphone is being updated
+    if (updatedFields.containsKey('telefono')) {
+      cellNumber = updatedFields['telefono'];
+    } else {
+      cellNumber = currentUser?.cellPhone;
+    }
+
     // Create a new UserModel with existing data
     UserModel updatedUser = UserModel(
       userId: currentUser!.userId,
       userName: updatedFields['nombreUsuario'] ?? currentUser.userName,
       name: updatedFields['nombre'] ?? currentUser.name,
       lastName: updatedFields['apellido'] ?? currentUser.lastName,
-      cellPhone: updatedFields['telefono'] ?? currentUser.cellPhone,
+      cellPhone: cellNumber,
       email: currentUser.email,
     );
 
     // Save the updated user to preferences
     UserPreferences.saveUser(updatedUser);
-
+    userData = updatedUser;
     return Future.value(updatedUser);
   }
 }
