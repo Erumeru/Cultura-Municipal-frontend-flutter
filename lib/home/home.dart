@@ -290,7 +290,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     print('El id es: ${userId}');
 
-
 //Simple check para ver la respuesta de la api al buscar usuario
 // try{
 
@@ -307,9 +306,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 //     }catch(e){
 //       print('Error al cargar el usuario: $e');
 //     }
-
-
-
 
     if (userId == null) {
       print(
@@ -1192,11 +1188,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             child: Row(
               children: [
                 Container(
-                  height: Get.height * 0.06,
                   color: Colors.transparent,
-                  child: Padding(
-                      padding: const EdgeInsets.all(7),
-                      child: Image.asset("image/CalendarioEvson.png")),
+                  child: GestureDetector(
+                    onTap: () {
+                      //! ------ Notification Page -----
+                      Get.to(() => const Note(), duration: Duration.zero);
+                    },
+                    child: Image.asset("image/bell.png", height: height / 20),
+                  ),
+
+                  //Pagging commented to render notification button
+
+                  // Padding(
+                  //     padding: const EdgeInsets.all(7),
+                  //     child: Image.asset("image/CalendarioEvson.png")),
                 ),
                 Expanded(
                   child: Column(
