@@ -456,6 +456,9 @@ class _EditState extends State<Edit> {
       lastName: updatedFields['apellido'] ?? currentUser.lastName,
       cellPhone: cellNumber,
       email: currentUser.email,
+      idMunicipio: currentUser.idMunicipio,
+      genero: currentUser.genero,
+      edad: currentUser.edad
     );
 
     // Save the updated user to preferences

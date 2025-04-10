@@ -6,7 +6,10 @@ class UserModel {
   final String name;
   final String lastName;
   final String email;
-  final int ?cellPhone;
+  final int? cellPhone;
+  final int idMunicipio;    // Nuevo campo
+  final int edad;           // Nuevo campo
+  final String genero;      // Nuevo campo
 
   UserModel({
     required this.userId,
@@ -15,6 +18,9 @@ class UserModel {
     required this.lastName,
     required this.email,
     required this.cellPhone,
+    required this.idMunicipio,   // Inicializar el nuevo campo
+    required this.edad,          // Inicializar el nuevo campo
+    required this.genero,        // Inicializar el nuevo campo
   });
 
   // Convert UserModel to JSON for storage
@@ -26,6 +32,9 @@ class UserModel {
       'lastName': lastName,
       'email': email,
       'cellPhone': cellPhone,
+      'idMunicipio': idMunicipio,  // Agregar al JSON
+      'edad': edad,                // Agregar al JSON
+      'genero': genero,            // Agregar al JSON
     };
   }
 
@@ -38,6 +47,9 @@ class UserModel {
       lastName: json['lastName'],
       email: json['email'],
       cellPhone: json['cellPhone'],
+      idMunicipio: json['idMunicipio'],  // Extraer del JSON
+      edad: json['edad'],                // Extraer del JSON
+      genero: json['genero'],            // Extraer del JSON
     );
   }
 }

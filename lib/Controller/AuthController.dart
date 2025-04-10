@@ -346,7 +346,10 @@ class AuthController extends GetxController {
             name: dataUser['nombre'],
             lastName: dataUser['apellido'],
             email: dataUser['email'],
-            cellPhone: dataUser['telefono']);
+            cellPhone: dataUser['telefono'],
+            idMunicipio: int.parse(dataUser['id_municipio']),
+            genero: dataUser['gender'],
+            edad: dataUser['edad']);
 
         await UserPreferences.saveUser(userModelData);
 
