@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/home/Categoria.dart';
 import 'package:goevent2/home/Evento.dart';
+import 'package:goevent2/promotions/promotions.dart';
 
 import '../Search/searchpage2.dart';
 import '../utils/media.dart';
@@ -1228,7 +1229,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 GestureDetector(
                   onTap: () {
                     //! ------ Notification Page -----
-                    Get.to(() => const Note(), duration: Duration.zero);
+                    Get.to(() => const Promotions(), duration: Duration.zero);
                   },
                   child: Image.asset("image/bell.png", height: height / 20),
                 ),
