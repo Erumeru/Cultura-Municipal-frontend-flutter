@@ -1,12 +1,17 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, avoid_print
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:goevent2/Api/ApiWrapper.dart';
 import 'package:goevent2/Api/Config.dart';
 import 'package:goevent2/AppModel/Homedata/HomedataController.dart';
+import 'package:goevent2/Controller/UserModel.dart';
+import 'package:goevent2/Controller/UserPreferences.dart';
+import 'package:goevent2/promotions/PromotionModel.dart';
+import 'package:goevent2/promotions/PromotionsController.dart';
 
 import 'package:goevent2/utils/AppWidget.dart';
 import 'package:provider/provider.dart';
@@ -28,18 +33,51 @@ class _NoteState extends State<Promotions> {
   late ColorNotifire notifire;
   List notificationList = [];
   bool isLoading = false;
+  final promotionsControl = PromotionsController();
+  UserModel? userData;
+  List<PromotionModel>? promotionList;
 
   getdarkmodepreviousstate() async {
     final prefs = await SharedPreferences.getInstance();
     bool? previusstate = prefs.getBool("setIsDark");
     notifire.setIsDark = previusstate;
-    }
+  }
 
   @override
   void initState() {
     super.initState();
     getdarkmodepreviousstate();
-    promotionListApi();
+    loadPromotions(); // Esta función se encarga de todo
+  }
+
+  Future<void> loadPromotions() async {
+    await getUserData(); // Espera a que se obtenga el usuario
+
+    promotionList = await promotionsControl.getFilteredPromotions(
+      age: userData!.edad,
+      gender: userData!.genero,
+      idMunicipio: userData!.idMunicipio,
+    );
+
+    promotionList?.forEach((promo) {
+      print('promocion ${promo.mensaje}');
+    });
+
+    // if (userData != null) {
+
+    //   print(promotionList);
+    //   print(promotionList);
+
+    //   promotionListApi(); // Si este también depende del userData
+    // } else {
+    //   print('userData is null');
+    // }
+
+    setState(() {});
+  }
+
+  Future<void> getUserData() async {
+    userData = await UserPreferences.getUser();
   }
 
   notificationListApis() {
@@ -81,6 +119,17 @@ class _NoteState extends State<Promotions> {
     }
   }
 
+  Uint8List? decodeBase64Image(String base64String) {
+    try {
+      // Elimina el encabezado "data:image/png;base64," si existe
+      final base64Data = base64String.split(',').last;
+      return base64Decode(base64Data);
+    } catch (e) {
+      print('Error al decodificar la imagen base64: $e');
+      return null;
+    }
+  }
+
   String timeAgo(DateTime d) {
     Duration diff = DateTime.now().difference(d);
     if (diff.inDays > 365)
@@ -116,8 +165,7 @@ class _NoteState extends State<Promotions> {
                     onTap: () {
                       Get.back();
                     },
-                    child:
-                        Icon(Icons.arrow_back, color: notifire.textcolor)),
+                    child: Icon(Icons.arrow_back, color: notifire.textcolor)),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 10),
@@ -136,110 +184,77 @@ class _NoteState extends State<Promotions> {
           SizedBox(height: height / 40),
           Expanded(
             child: SingleChildScrollView(
-              child: FutureBuilder(
-                  future: promotionListApi(),
-                  builder: (ctx, AsyncSnapshot snap) {
-                    if (snap.hasData) {
-                      var notif = snap.data;
-
-                      return notif.length == 0
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: Get.height * 0.26),
-                                Image(
-                                    image: const AssetImage("image/56.png"),
-                                    height: Get.height * 0.14),
-                                SizedBox(height: Get.height * 0.02),
-                                Center(
-                                  child: Text("No New Notifications".tr,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: notifire.gettextcolor,
-                                        fontSize: 16,
-                                        fontFamily: 'Gilroy Bold',
-                                      )),
+              child: promotionList == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : promotionList!.isEmpty
+                      ? Center(child: Text('No hay promociones disponibles.'))
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(12),
+                          itemCount: promotionList!.length,
+                          itemBuilder: (context, i) {
+                            final promo = promotionList![i];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                              child: InkWell(
+                                onTap: () {
+                                  print(
+                                      'Promoción seleccionada: ${promo.mensaje}');
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Row(
+                                    children: [
+                                      if (promo.imagen != null)
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Image.memory(
+                                            decodeBase64Image(promo.imagen!)!,
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      else
+                                        Container(
+                                          height: 80,
+                                          width: 80,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Icon(Icons.image_not_supported,
+                                              size: 40,
+                                              color: Colors.grey[600]),
+                                        ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Text(
+                                          promo.mensaje ?? 'Sin mensaje',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: notifire.textcolor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(height: Get.height * 0.02),
-                              ],
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.zero,
-                              itemCount: notif.length,
-                              itemBuilder: (context, i) {
-                                var notific = notif.reversed.toList();
-                                DateTime tempDate =
-                                    DateFormat("yyyy-MM-dd hh:mm:ss")
-                                        .parse(notific[i]["datetime"]);
-                                return notificationslist(
-                                  title: notific[i]["title"],
-                                  discription: notific[i]["description"],
-                                  time: timeAgo(tempDate),
-                                );
-                              },
+                              ),
                             );
-                    } else {
-                      return isLoadingCircular();
-                    }
-                  }),
+                          },
+                        ),
             ),
           ),
-          SizedBox(height: height / 100),
-        ],
-      ),
-    );
-  }
-
-  Widget notificationslist({String? title, String? discription, String? time}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width / 30),
-      child: Column(
-        children: [
-          SizedBox(height: height / 100),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                  backgroundColor: Colors.grey.shade300,
-                  child: Image.asset("image/Notification2.png",
-                      height: height / 34)),
-              SizedBox(width: width / 30),
-              Container(
-                width: width / 1.8,
-                color: Colors.transparent,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title!,
-                        style: TextStyle(
-                            color: notifire.textcolor,
-                            fontFamily: 'Gilroy_Bold',
-                            fontSize: height / 55)),
-                    SizedBox(height: height / 200),
-                    Text(discription!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.grey.withOpacity(0.8),
-                            fontFamily: 'Gilroy_Medium',
-                            fontSize: height / 60)),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Text(
-                time!,
-                style: TextStyle(
-                    color: Colors.grey.withOpacity(0.8),
-                    fontFamily: 'Gilroy_Medium',
-                    fontSize: height / 60),
-              ),
-            ],
-          ),
-          SizedBox(height: height / 100),
-          const Divider(thickness: 0.6),
         ],
       ),
     );

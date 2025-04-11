@@ -44,7 +44,10 @@ class ApiWrapper {
         fontSize: 14.0);
   }
 
+
+//Method doesnt work uses an old url
   static dataPost(appUrl, method) async {
+    print('la url sera $appUrl');
     print('fbghsjyhgfvjshgfbjshf:------------${method}');
     try {
       var url = Uri.parse(Config.api_url + appUrl);
@@ -64,6 +67,39 @@ class ApiWrapper {
       print("Exeption----- $e");
     }
   }
+
+  static Future<dynamic> postData(String url, Map<String, dynamic> data) async {
+
+     try {
+    final String? token = await UserPreferences.getToken(); // Obtiene el token
+
+    if (token == null || token.isEmpty) {
+      print("Error: Token no encontrado.");
+      return null;
+    }
+
+    var response = await http.post(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token", // Agrega el token
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print("Error en POST (${response.statusCode}): ${response.body}");
+      return null;
+    }
+  } catch (e) {
+    print("Error en la solicitud de actualizacion: $e");
+    return null;
+  }
+  }
+
+
 static Future<http.Response?> patchData(String url, Map<String, dynamic> body) async {
   try {
     final String? token = await UserPreferences.getToken(); // Obtiene el token
@@ -93,6 +129,9 @@ static Future<http.Response?> patchData(String url, Map<String, dynamic> body) a
     return null;
   }
 }
+
+
+
 
   static finalticketdataPost(appUrl, method) async {
     try {

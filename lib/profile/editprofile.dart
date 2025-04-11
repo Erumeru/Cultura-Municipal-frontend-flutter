@@ -64,8 +64,6 @@ class _EditState extends State<Edit> {
       email.text = userData?.email ?? '';
       password.text = "12345";
       networkimage = "hola";
-
-      print("telefonod ${number.text}");
     });
   }
 
