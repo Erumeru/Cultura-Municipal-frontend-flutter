@@ -353,47 +353,54 @@ class _EditState extends State<Edit> {
     }
 
     // Phone validation (optional)
-    if (number.text != (userData?.cellPhone?.toString())) {
-      print('El número es diferente');
+    print(
+        'datos user = ${userData?.cellPhone.toString()}  number text = ${number.text.toString()}');
+    // if (number.text=="" &&  (userData?.cellPhone?.toString()==null) ) {
+    //   print('El número es diferente');
 
-      if (number.text.isEmpty && userData?.cellPhone != null) {
-        // Ask the user if they want to erase their phone number
-        bool? confirmDeletion = await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Eliminar número"),
-              content: Text("¿Quieres eliminar tu número de teléfono?"),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false), // Cancel
-                  child: Text("No"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true), // Confirm
-                  child: Text("Sí"),
-                ),
-              ],
-            );
-          },
-        );
+    if (number.text.isEmpty && userData?.cellPhone != null) {
+      // Ask the user if they want to erase their phone number
+      bool? confirmDeletion = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Eliminar número"),
+            content: Text("¿Quieres eliminar tu número de teléfono?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, false);
+                  number.text = userData!.cellPhone.toString();
+                  },
+                child: Text("No"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text("Sí"),
+              ),
+            ],
+          );
+        },
+      );
 
-        if (confirmDeletion == true) {
-          updatedFields["telefono"] = null;
+      if (confirmDeletion == true) {
+        print("entro");
+        updatedFields["telefono"] = null;
+      }
+    } else if(number.text.isNotEmpty && userData?.cellPhone == null){
+      if (RegExp(r'^[0-9]+$').hasMatch(number.text)) {
+        // La cadena contiene solo números
+        final phoneNumber = int.tryParse(number.text);
+        if (phoneNumber != null) {
+          updatedFields["telefono"] = phoneNumber;
         }
       } else {
-        if (RegExp(r'^[0-9]+$').hasMatch(number.text)) {
-          // La cadena contiene solo números
-          final phoneNumber = int.tryParse(number.text);
-          if (phoneNumber != null) {
-            updatedFields["telefono"] = phoneNumber;
-          }
-        } else {
-          // La cadena contiene letras u otros caracteres
-          ApiWrapper.showToastMessage("Teléfono no válido: debe contener solo números.");
-        }
+        // La cadena contiene letras u otros caracteres
+        ApiWrapper.showToastMessage(
+            "Teléfono no válido: debe contener solo números.");
       }
     }
+    // }
 
     // If there are validation errors, show message and return empty map
     if (errorMessages.isNotEmpty) {
@@ -448,16 +455,15 @@ class _EditState extends State<Edit> {
 
     // Create a new UserModel with existing data
     UserModel updatedUser = UserModel(
-      userId: currentUser!.userId,
-      userName: updatedFields['nombreUsuario'] ?? currentUser.userName,
-      name: updatedFields['nombre'] ?? currentUser.name,
-      lastName: updatedFields['apellido'] ?? currentUser.lastName,
-      cellPhone: cellNumber,
-      email: currentUser.email,
-      idMunicipio: currentUser.idMunicipio,
-      genero: currentUser.genero,
-      edad: currentUser.edad
-    );
+        userId: currentUser!.userId,
+        userName: updatedFields['nombreUsuario'] ?? currentUser.userName,
+        name: updatedFields['nombre'] ?? currentUser.name,
+        lastName: updatedFields['apellido'] ?? currentUser.lastName,
+        cellPhone: cellNumber,
+        email: currentUser.email,
+        idMunicipio: currentUser.idMunicipio,
+        genero: currentUser.genero,
+        edad: currentUser.edad);
 
     // Save the updated user to preferences
     UserPreferences.saveUser(updatedUser);
