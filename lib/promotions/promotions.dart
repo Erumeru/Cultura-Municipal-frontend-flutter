@@ -196,7 +196,7 @@ class _NoteState extends State<Promotions> {
                           itemBuilder: (context, i) {
                             final promo = promotionList![i];
                             return Card(
-                              color: notifire.getbuttoncolor,
+                              color: notifire.backgrounde,
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
