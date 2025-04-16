@@ -333,21 +333,21 @@ class _EditState extends State<Edit> {
 
     // Username validation
     if (userName.text.trim().isEmpty) {
-      errorMessages.add('El nombre de usuario no puede estar vacío');
+      errorMessages.add('Username must not be empty'.tr);
     } else if (userName.text != (userData?.userName ?? '')) {
       updatedFields["nombreUsuario"] = userName.text.trim();
     }
 
     // Name validation
     if (name.text.trim().isEmpty) {
-      errorMessages.add('El nombre no puede estar vacío');
+      errorMessages.add('Name must not be empty'.tr);
     } else if (name.text != (userData?.name ?? '')) {
       updatedFields["nombre"] = name.text.trim();
     }
 
     // LastName validation
     if (lastName.text.trim().isEmpty) {
-      errorMessages.add('El apellido no puede estar vacío');
+      errorMessages.add('Last name must not be empty'.tr);
     } else if (lastName.text != (userData?.lastName ?? '')) {
       updatedFields["apellido"] = lastName.text.trim();
     }
@@ -365,19 +365,19 @@ class _EditState extends State<Edit> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Eliminar número"),
-            content: Text("¿Quieres eliminar tu número de teléfono?"),
+            title: Text("Delete phone number".tr),
+            content: Text("Do you want to delete your phone number?".tr),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context, false);
                   number.text = userData!.cellPhone.toString();
                 },
-                child: Text("No"),
+                child: Text("No".tr),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: Text("Sí"),
+                child: Text("Delete".tr),
               ),
             ],
           );
@@ -396,7 +396,7 @@ class _EditState extends State<Edit> {
           updatedFields["telefono"] = phoneNumber;
         }
       } else {
-        errorMessages.add("Invalid phone: must only contain between 7 and 15 numerical digits.");
+        errorMessages.add("Invalid phone: must only contain between 7 and 15 numerical digits.".tr);
       }
     }
     // }
@@ -414,7 +414,7 @@ class _EditState extends State<Edit> {
     var updatedFields = await getUpdatedFields(context, userData);
     print('updated fields $updatedFields');
     if (updatedFields.isEmpty) {
-      ApiWrapper.showToastMessage("No hay cambios para actualizar.");
+      ApiWrapper.showToastMessage("There are no changes to update.".tr);
       return;
     }
 
@@ -433,9 +433,9 @@ class _EditState extends State<Edit> {
           // Update the user data in preferences
           createUpdatedUserModel(userData, updatedFields);
           //Get.back();
-          ApiWrapper.showToastMessage(decodedResponse["message"]);
+          ApiWrapper.showToastMessage("User updated succesfully".tr);
         } else {
-          ApiWrapper.showToastMessage(decodedResponse["message"]);
+          ApiWrapper.showToastMessage(decodedResponse["message"].toString().tr);
         }
       }
     });

@@ -1621,7 +1621,14 @@ class LocaleString extends Translations {
           "Other": "Otro",
           "User name/Enterprise/Association": "Nombre de usuario/Empresa/Asociación",
           "Promotions": "Promociones",
-          "Invalid phone: must only contain between 7 and 15 numerical digits.": "Teléfono no válido: debe contener entre 7 y 15 dígitos numéricos."
+          "Invalid phone: must only contain between 7 and 15 numerical digits.": "Teléfono no válido: debe contener entre 7 y 15 dígitos numéricos.",
+          "Delete phone number": "Eliminar número",
+          "Do you want to delete your phone number?": "¿Desea eliminar tu número de teléfono?",
+          "There are no changes to update.": "No hay cambios para actualizar.",
+          "Username must not be empty": "El nombre de usuario no puede estar vacío",
+          "Name must not be empty": "El nombre no puede estar vacío",
+          "Last name must not be empty": "El apellido no puede estar vacío",
+          "User updated succesfully" : "Usuario actualizado correctamente"
         },
 
         'tr_IN': {
