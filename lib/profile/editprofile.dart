@@ -352,13 +352,14 @@ class _EditState extends State<Edit> {
       updatedFields["apellido"] = lastName.text.trim();
     }
 
-    // Phone validation (optional)
     print(
         'datos user = ${userData?.cellPhone.toString()}  number text = ${number.text.toString()}');
-    // if (number.text=="" &&  (userData?.cellPhone?.toString()==null) ) {
-    //   print('El número es diferente');
 
-    if (number.text.isEmpty && userData?.cellPhone != null) {
+    if (number.text.isEmpty) {
+      if (userData?.cellPhone == null) {
+        return updatedFields;
+      }
+
       // Ask the user if they want to erase their phone number
       bool? confirmDeletion = await showDialog(
         context: context,
@@ -371,7 +372,7 @@ class _EditState extends State<Edit> {
                 onPressed: () {
                   Navigator.pop(context, false);
                   number.text = userData!.cellPhone.toString();
-                  },
+                },
                 child: Text("No"),
               ),
               TextButton(
@@ -387,17 +388,15 @@ class _EditState extends State<Edit> {
         print("entro");
         updatedFields["telefono"] = null;
       }
-    } else if(number.text.isNotEmpty && userData?.cellPhone == null){
-      if (RegExp(r'^[0-9]+$').hasMatch(number.text)) {
+    } else if (number.text != userData?.cellPhone.toString()) {
+      if (RegExp(r'^[0-9]{7,15}$').hasMatch(number.text)) {
         // La cadena contiene solo números
         final phoneNumber = int.tryParse(number.text);
         if (phoneNumber != null) {
           updatedFields["telefono"] = phoneNumber;
         }
       } else {
-        // La cadena contiene letras u otros caracteres
-        ApiWrapper.showToastMessage(
-            "Teléfono no válido: debe contener solo números.");
+        errorMessages.add("Invalid phone: must only contain between 7 and 15 numerical digits.");
       }
     }
     // }

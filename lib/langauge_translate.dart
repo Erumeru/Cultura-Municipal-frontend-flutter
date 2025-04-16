@@ -1621,6 +1621,7 @@ class LocaleString extends Translations {
           "Other": "Otro",
           "User name/Enterprise/Association": "Nombre de usuario/Empresa/Asociación",
           "Promotions": "Promociones",
+          "Invalid phone: must only contain between 7 and 15 numerical digits.": "Teléfono no válido: debe contener entre 7 y 15 dígitos numéricos."
         },
 
         'tr_IN': {
