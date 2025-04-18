@@ -517,12 +517,26 @@ class _EventsDetailsState extends State<EventsDetails> {
       //! ------ Buy Ticket button -----!//
       appBar: !isloading
           ? AppBar(
+              toolbarHeight: 90,
               elevation: 0,
               backgroundColor: Colors.transparent,
+              leading: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 20, bottom: 55),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
               iconTheme: IconThemeData(
                 color: Colors.white,
               ),
               title: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Event Details".tr,
@@ -533,38 +547,69 @@ class _EventsDetailsState extends State<EventsDetails> {
                         color: Colors.white),
                   ),
                   Spacer(),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(100 / 2),
-                    child: BackdropFilter(
-                      blendMode: BlendMode.srcIn,
-                      filter: ImageFilter.blur(
-                        sigmaX: 10, // mess with this to update blur
-                        sigmaY: 10,
-                      ),
-                      child: CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.transparent,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 3),
-                          child: LikeButton(
-                            isLiked: esEventoFavorito(
-                                widget.evento.id), // Estado inicial
-                            onTap: (bool isLiked) async {
-                              // Manejo asincrónico del estado
-                              bool success = await onLikeButtonTapped(
-                                  isLiked, widget.evento.id);
-                              return !success;
-                            },
-                            likeBuilder: (bool isLiked) {
-                              return !isLiked
-                                  ? const Icon(Icons.favorite_border,
-                                      color: Colors.grey, size: 24)
-                                  : const Icon(Icons.favorite,
-                                      color: Color(0xffF0635A), size: 24);
-                            },
+                  Container(
+                    height: 80,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(100 / 2),
+                          child: BackdropFilter(
+                            blendMode: BlendMode.srcIn,
+                            filter: ImageFilter.blur(
+                              sigmaX: 10, // mess with this to update blur
+                              sigmaY: 10,
+                            ),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.transparent,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 3),
+                                child: LikeButton(
+                                  isLiked: esEventoFavorito(
+                                      widget.evento.id), // Estado inicial
+                                  onTap: (bool isLiked) async {
+                                    // Manejo asincrónico del estado
+                                    bool success = await onLikeButtonTapped(
+                                        isLiked, widget.evento.id);
+                                    return !success;
+                                  },
+                                  likeBuilder: (bool isLiked) {
+                                    return !isLiked
+                                        ? const Icon(Icons.favorite_border,
+                                            color: Colors.grey, size: 24)
+                                        : const Icon(Icons.favorite,
+                                            color: Color(0xffF0635A), size: 24);
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(100 / 2),
+                          child: BackdropFilter(
+                            
+                            blendMode: BlendMode.srcIn,
+                            filter: ImageFilter.blur(
+                              sigmaX: 10, // mess with this to update blur
+                              sigmaY: 10,
+                            ),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Colors.transparent,
+                              child: IconButton(
+                                padding: EdgeInsets.only(right: 3),
+                                  icon: Icon(Icons.share_outlined,
+                                      color: Colors.grey, size: 24),
+                                  onPressed: () async {}),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
