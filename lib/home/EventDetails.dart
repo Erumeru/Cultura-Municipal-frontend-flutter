@@ -850,24 +850,48 @@ class _EventsDetailsState extends State<EventsDetails> {
                                 Padding(
                                   padding: EdgeInsets.only(left: 50),
                                 ),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    abrirMapa(widget.evento.latitud,
-                                        widget.evento.longitud);
-                                  },
-                                  icon: Icon(Icons.map,
-                                      color: Colors.white), // Icono de mapa
-                                  label: Text('Ir al mapa'), // Texto del botón
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors
-                                        .blueAccent, // Color del texto e icono
-                                    textStyle: TextStyle(
-                                        fontSize: 17), // Tamaño del texto
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12), // Espaciado del botón
-                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        abrirMapa(widget.evento.latitud,
+                                            widget.evento.longitud);
+                                      },
+                                      icon: Icon(Icons.map,
+                                          color: Colors.white), // Icono de mapa
+                                      label: Text('Ir al mapa'), // Texto del botón
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: Colors
+                                            .blueAccent, // Color del texto e icono
+                                        textStyle: TextStyle(
+                                            fontSize: 17), // Tamaño del texto
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12), // Espaciado del botón
+                                      ),
+                                    ),
+                                    //Report event button, no implemented
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        abrirMapa(widget.evento.latitud,
+                                            widget.evento.longitud);
+                                      },
+                                      icon: Icon(Icons.dangerous,
+                                          color: Colors.white), // Icono de mapa
+                                      label: Text('Reportar evento'.tr), // Texto del botón
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: Color.fromARGB(255, 190, 31, 31), // Color del texto e icono
+                                        textStyle: TextStyle(
+                                            fontSize: 17), // Tamaño del texto
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 12), // Espaciado del botón
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
