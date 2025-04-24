@@ -901,7 +901,7 @@ class _EventsDetailsState extends State<EventsDetails> {
                                                       color: notifire.textcolor
                                                           .withOpacity(0.4)),
                                                   hintText:
-                                                      'Describe the problem...',
+                                                      'Describe the problem...'.tr,
                                                   border: OutlineInputBorder(),
                                                 ),
                                               ),

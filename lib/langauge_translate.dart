@@ -1628,7 +1628,13 @@ class LocaleString extends Translations {
           "Username must not be empty": "El nombre de usuario no puede estar vacío",
           "Name must not be empty": "El nombre no puede estar vacío",
           "Last name must not be empty": "El apellido no puede estar vacío",
-          "User updated succesfully" : "Usuario actualizado correctamente"
+          "User updated succesfully" : "Usuario actualizado correctamente",
+          "Go to map": "Ir al mapa",
+          "Report event": "Reportar evento",
+          "Please describe the problem with 30 characters or more": "Por favor describa el problema en 30 caracteres o más",
+          "There was an error submitting the report": "Hubo un error al enviar el reporte",
+          "Report submitted": "Reporte enviado",
+          "Describe the problem...":"Describa el problema..."
         },
 
         'tr_IN': {
