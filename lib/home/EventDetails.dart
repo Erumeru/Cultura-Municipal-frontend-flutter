@@ -12,6 +12,7 @@ import 'package:goevent2/Api/Config.dart';
 import 'package:goevent2/AppModel/Homedata/HomedataController.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/home/Categoria.dart';
+import 'package:goevent2/Controller/UserModel.dart';
 import 'package:goevent2/home/Evento.dart';
 import 'package:goevent2/home/Gallery_View.dart';
 import 'package:goevent2/home/TrendingCatPage.dart';
@@ -592,7 +593,6 @@ class _EventsDetailsState extends State<EventsDetails> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(100 / 2),
                           child: BackdropFilter(
-                            
                             blendMode: BlendMode.srcIn,
                             filter: ImageFilter.blur(
                               sigmaX: 10, // mess with this to update blur
@@ -602,7 +602,7 @@ class _EventsDetailsState extends State<EventsDetails> {
                               radius: 18,
                               backgroundColor: Colors.transparent,
                               child: IconButton(
-                                padding: EdgeInsets.only(right: 3),
+                                  padding: EdgeInsets.only(right: 3),
                                   icon: Icon(Icons.share_outlined,
                                       color: Colors.grey, size: 24),
                                   onPressed: () async {}),
@@ -851,7 +851,8 @@ class _EventsDetailsState extends State<EventsDetails> {
                                   padding: EdgeInsets.only(left: 50),
                                 ),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     ElevatedButton.icon(
                                       onPressed: () {
@@ -860,7 +861,8 @@ class _EventsDetailsState extends State<EventsDetails> {
                                       },
                                       icon: Icon(Icons.map,
                                           color: Colors.white), // Icono de mapa
-                                      label: Text('Ir al mapa'), // Texto del botón
+                                      label: Text(
+                                          'Go to map'.tr), // Texto del botón
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.white,
                                         backgroundColor: Colors
@@ -869,26 +871,125 @@ class _EventsDetailsState extends State<EventsDetails> {
                                             fontSize: 17), // Tamaño del texto
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 16,
-                                            vertical: 12), // Espaciado del botón
+                                            vertical:
+                                                12), // Espaciado del botón
                                       ),
                                     ),
                                     //Report event button, no implemented
                                     ElevatedButton.icon(
                                       onPressed: () {
-                                        abrirMapa(widget.evento.latitud,
-                                            widget.evento.longitud);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            TextEditingController
+                                                _reportController =
+                                                TextEditingController();
+
+                                            return AlertDialog(
+                                              backgroundColor:
+                                                  notifire.backgrounde,
+                                              title: Text(
+                                                'Report event'.tr,
+                                                style: TextStyle(
+                                                    color: notifire.textcolor),
+                                              ),
+                                              content: TextField(
+                                                controller: _reportController,
+                                                maxLength: 200,
+                                                decoration: InputDecoration(
+                                                  hintStyle: TextStyle(
+                                                      color: notifire.textcolor
+                                                          .withOpacity(0.4)),
+                                                  hintText:
+                                                      'Describe the problem...',
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text(
+                                                    'Cancel'.tr,
+                                                    style: TextStyle(
+                                                        color:
+                                                            notifire.textcolor),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.transparent,
+                                                  ),
+                                                  child: Text(
+                                                    'Send'.tr,
+                                                    style: TextStyle(
+                                                        color:
+                                                            notifire.textcolor),
+                                                  ),
+                                                  onPressed: () {
+                                                    final mensaje =
+                                                        _reportController.text
+                                                            .trim();
+                                                    if (mensaje.isNotEmpty &&
+                                                        mensaje.length >= 30) {
+                                                      // Aquí puedes enviar el reporte (API, Firestore, etc.)
+
+                                                      Map<String, dynamic>
+                                                          data = {
+                                                        'id_evento': widget.eid,
+                                                        'id_usuario': userId,
+                                                        'motivo': mensaje
+                                                      };
+                                                      ApiWrapper.postData(
+                                                              'http://216.225.205.93:3000/api/eventos/reportarEvento',
+                                                              data)
+                                                          .then((response) {
+                                                            print('response ' '$response');
+                                                          if ((response['rta'] ==
+                                                              true)) {
+                                                            ApiWrapper
+                                                                .showToastMessage(
+                                                                    'Report submitted'
+                                                                        .tr);
+                                                          } else {
+                                                            ApiWrapper
+                                                                .showToastMessage(
+                                                                    'There was an error submitting the report'
+                                                                        .tr);
+                                                          }
+                                                        
+                                                      });
+                                                      print(
+                                                          "Reporte enviado: $mensaje");
+
+                                                      // Cierra el diálogo
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    } else {
+                                                      ApiWrapper.showToastMessage(
+                                                          'Please describe the problem with 30 characters or more'
+                                                              .tr);
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       },
                                       icon: Icon(Icons.dangerous,
-                                          color: Colors.white), // Icono de mapa
-                                      label: Text('Reportar evento'.tr), // Texto del botón
+                                          color: Colors.white),
+                                      label: Text('Report event'.tr),
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.white,
-                                        backgroundColor: Color.fromARGB(255, 190, 31, 31), // Color del texto e icono
-                                        textStyle: TextStyle(
-                                            fontSize: 17), // Tamaño del texto
+                                        backgroundColor:
+                                            Color.fromARGB(255, 190, 31, 31),
+                                        textStyle: TextStyle(fontSize: 17),
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 12), // Espaciado del botón
+                                            horizontal: 16, vertical: 12),
                                       ),
                                     ),
                                   ],
