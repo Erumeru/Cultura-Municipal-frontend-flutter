@@ -83,8 +83,12 @@ class Evento {
       correo: json['correo'] ?? '',
       tituloDireccion: json['titulo_direccion'] ?? '',
       direccionEvento: json['direccion_evento'] ?? '',
-      latitud: json['latitud'] != null ? double.tryParse(json['latitud']) ?? 0.0 : 0.0,
-      longitud: json['longitud'] != null ? double.tryParse(json['longitud']) ?? 0.0 : 0.0,
+      latitud: json['latitud'] != null
+          ? double.tryParse(json['latitud']) ?? 0.0
+          : 0.0,
+      longitud: json['longitud'] != null
+          ? double.tryParse(json['longitud']) ?? 0.0
+          : 0.0,
       idUsuario: json['id_usuario'] ?? 0,
       idMunicipio: json['id_municipio'] ?? 0,
       idCategoria: json['id_categoria'] ?? 0,
@@ -93,367 +97,392 @@ class Evento {
       statusActive: json['status_active'] == 1,
     );
   }
-  
+
   static String formatDate(String dateStr) {
-  DateTime dateTime = DateTime.parse(dateStr);
-  return "${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}";
+    DateTime dateTime = DateTime.parse(dateStr);
+    return "${dateTime.day.toString().padLeft(2, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}";
+  }
 }
-
-}
-
 
 class EventosService {
-
   Future<List<Evento>> cargarEventos() async {
-  String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
+    String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
 
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({}),
+      );
 
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
 
-      if (jsonResponse['rta'] == true && jsonResponse['eventos'] is List) {
-        List<dynamic> eventosJson = jsonResponse['eventos'];
+        if (jsonResponse['rta'] == true && jsonResponse['eventos'] is List) {
+          List<dynamic> eventosJson = jsonResponse['eventos'];
 
-        List<Evento> tempEventosList = [];
+          List<Evento> tempEventosList = [];
 
-        for (var eventoJson in eventosJson) {
-          int id = eventoJson['id'];
+          for (var eventoJson in eventosJson) {
+            int id = eventoJson['id'];
 
-          // Obtener detalles del evento individual
-          Evento evento = await obtenerDetallesEvento(id);
-          tempEventosList.add(evento);
-        }
-
-        return tempEventosList;
-      } else {
-        throw Exception('La respuesta no contiene una lista de eventos.');
-      }
-    } else {
-      throw Exception('Error al cargar eventos: ${response.statusCode}');
-    }
-  } catch (e) {
-    throw Exception('Error al realizar la solicitud: $e');
-  }
-}
-  
-  
-  Future<List<Evento>> cargarEventosEnUnaSemana() async {
-  String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
-
-  DateTime ahora = DateTime.now();
-  DateTime finSemana = ahora.add(Duration(days: 7));
-
-  String fechaInicio = "${ahora.year}-${ahora.month.toString().padLeft(2, '0')}-${ahora.day.toString().padLeft(2, '0')}";
-  String fechaFin = "${finSemana.year}-${finSemana.month.toString().padLeft(2, '0')}-${finSemana.day.toString().padLeft(2, '0')}";
-
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'fecha_inicio': fechaInicio,
-        'fecha_fin': fechaFin,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
-
-      if (jsonResponse['rta'] == true && jsonResponse['eventos'] is List) {
-        List<dynamic> eventosJson = jsonResponse['eventos'];
-
-        List<Evento> tempEventosList = [];
-
-        for (var eventoJson in eventosJson) {
-          int id = eventoJson['id'];
-
-          // Obtener detalles del evento individual
-          Evento evento = await obtenerDetallesEvento(id);
-          tempEventosList.add(evento);
-        }
-
-        return tempEventosList;
-      } else {
-        throw Exception('La respuesta no contiene una lista de eventos.');
-      }
-    } else {
-      throw Exception('Error al cargar eventos: ${response.statusCode}');
-    }
-  } catch (e) {
-    throw Exception('Error al realizar la solicitud: $e');
-  }
-}
-
-
-
-Future<List<Evento>> cargarEventosDelMes() async {
-  final String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
-
-  DateTime ahora = DateTime.now();
-  DateTime primerDiaMes = DateTime(ahora.year, ahora.month, 1);
-  DateTime ultimoDiaMes = DateTime(ahora.year, ahora.month + 1, 0);
-
-  String fechaInicio = "${primerDiaMes.year}-${primerDiaMes.month.toString().padLeft(2, '0')}-${primerDiaMes.day.toString().padLeft(2, '0')}";
-  String fechaFin = "${ultimoDiaMes.year}-${ultimoDiaMes.month.toString().padLeft(2, '0')}-${ultimoDiaMes.day.toString().padLeft(2, '0')}";
-
-  print('fechaInicio: $fechaInicio');
-  print('fechaFin: $fechaFin');
-
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'fecha_inicio': fechaInicio,
-        'fecha_fin': fechaFin,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-      if (responseData['rta'] == true) {
-        List<dynamic> eventosJson = responseData['eventos'];
-        List<Evento> eventos = eventosJson.map((eventoJson) => Evento.fromJson(eventoJson)).toList();
-        return eventos;
-      } else {
-        print('Error en la respuesta: ${responseData['message']}');
-        return [];
-      }
-    } else {
-      print('Error en la solicitud: ${response.statusCode}');
-      return [];
-    }
-  } catch (e) {
-    print('Error en la conexión: $e');
-    return [];
-  }
-}
-
-Future<List<Evento>> cargarEventosCategoria(int idCategoria) async {
-  final String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
-
-
-
-  try {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'id_categoria': idCategoria
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-      if (responseData['rta'] == true) {
-        List<dynamic> eventosJson = responseData['eventos'];
-        List<Evento> eventos = eventosJson.map((eventoJson) => Evento.fromJson(eventoJson)).toList();
-        print('Eventossssss${eventosJson}');
-        print('id cat: ${idCategoria}');
-        return eventos;
-      } else {
-        print('Error en la respuesta: ${responseData['message']}');
-        return [];
-      }
-    } else {
-      print('Error en la solicitud: ${response.statusCode}');
-      return [];
-    }
-  } catch (e) {
-    print('Error en la conexión: $e');
-    return [];
-  }
-}
-
-Future<List<Evento>> cargarEventosCercanos(String latitud, String longitud) async {
-  final String apiUrl = 'http://216.225.205.93:3000/api/eventos/cercanos/$longitud/$latitud';
-  List<Evento> eventosConDetalles = [];
-  List<dynamic> eventosDistancia = [];
-
-  try {
-    final response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      List<dynamic> responseData = jsonDecode(response.body);
-
-      for (var eventoData in responseData) {
-        int eventoId = eventoData['id'];
-        Evento evento = await obtenerDetallesEvento(eventoId);
-        eventosConDetalles.add(evento);
-        
-      }
-      eventosDistancia = responseData;
-
-    } else {
-      print('Error en la solicitud de eventos cercanos: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error en la conexión: $e');
-  }
-
-  return eventosConDetalles;
-}
-
-
-Future<List<Map<String, dynamic>>> obtenerEventosCercanos(
-    String latitud, String longitud) async {
-  final url = Uri.parse(
-      'http://216.225.205.93:3000/api/eventos/cercanos/$longitud/$latitud');
-  
-  try {
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      // Decodificar la respuesta JSON y retornarla como una lista de mapas
-      return List<Map<String, dynamic>>.from(json.decode(response.body));
-    } else {
-      // Manejar errores de la solicitud
-      throw Exception('Error al obtener eventos cercanos');
-    }
-  } catch (e) {
-    // Manejar cualquier excepción
-    throw Exception('Error al realizar la solicitud: $e');
-  }
-}
-
-Future<List<Evento>> obtenerEventosFavoritos() async {
-  final String favoritosUrl = 'http://216.225.205.93:3000/api/favoritos/principales';
-
-  try {
-    final response = await http.get(
-      Uri.parse(favoritosUrl),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
-
-      if (jsonResponse['rta'] == true) {
-        var favoritoList = jsonResponse['favorito'];
-
-        if (favoritoList is List && favoritoList.isNotEmpty) {
-          List<Evento> eventosFavoritos = [];
-
-          for (var favoritoGroup in favoritoList) {
-            var favoritos = favoritoGroup['Favoritos'];
-            if (favoritos is List) {
-              for (var favorito in favoritos) {
-                int idEvento = favorito['id_event'];
-                Evento evento = await obtenerDetallesEvento(idEvento);
-                eventosFavoritos.add(evento);
-              }
-            }
+            // Obtener detalles del evento individual
+            Evento evento = await obtenerDetallesEvento(id);
+            tempEventosList.add(evento);
           }
 
-          return eventosFavoritos;
-        }
-      } else {
-        print('Error en la respuesta: ${jsonResponse['message']}');
-      }
-    } else {
-      print('Error al obtener favoritos: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error en obtenerEventosFavoritos: $e');
-  }
-
-  return [];
-}
-
-
-Future<Evento> obtenerDetallesEvento(int id) async {
-  final Uri url = Uri.parse('http://216.225.205.93:3000/api/eventos/$id');
-
-  try {
-    final response = await http.get(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
-
-      if (jsonResponse['rta'] == true) {
-        var eventoJson = jsonResponse['evento'];
-        if (eventoJson != null && eventoJson is Map<String, dynamic>) {
-          return Evento.fromJson(eventoJson);
+          return tempEventosList;
         } else {
-          throw Exception('La respuesta del servidor no contiene un evento válido.');
+          throw Exception('La respuesta no contiene una lista de eventos.');
         }
       } else {
-        throw Exception('Error al obtener detalles del evento.');
+        throw Exception('Error al cargar eventos: ${response.statusCode}');
       }
-    } else {
-      throw Exception('Error al obtener detalles del evento: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error al realizar la solicitud: $e');
     }
-  } catch (e) {
-    print('Error en obtenerDetallesEvento: $e');
-    throw Exception('Error al realizar la solicitud: $e');
   }
-}
 
-Future<List<dynamic>> obtenerFavoritos(int userId) async {
-  final String apiUrl = 'http://216.225.205.93:3000/api/favoritos/byIdUser/$userId';
-  
+  Future<List<Evento>> cargarEventosEnUnaSemana() async {
+    String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
 
-  try {
-    final response = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        
-      },
-    );
+    DateTime ahora = DateTime.now();
+    DateTime finSemana = ahora.add(Duration(days: 7));
 
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+    String fechaInicio =
+        "${ahora.year}-${ahora.month.toString().padLeft(2, '0')}-${ahora.day.toString().padLeft(2, '0')}";
+    String fechaFin =
+        "${finSemana.year}-${finSemana.month.toString().padLeft(2, '0')}-${finSemana.day.toString().padLeft(2, '0')}";
 
-      if (jsonResponse['rta'] == true) {
-        var favoritoList = jsonResponse['favorito'];
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'fecha_inicio': fechaInicio,
+          'fecha_fin': fechaFin,
+        }),
+      );
 
-        // Verificar si la lista 'favorito' no está vacía
-        if (favoritoList is List && favoritoList.isNotEmpty) {
-          return favoritoList;
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonResponse['rta'] == true && jsonResponse['eventos'] is List) {
+          List<dynamic> eventosJson = jsonResponse['eventos'];
+
+          List<Evento> tempEventosList = [];
+
+          for (var eventoJson in eventosJson) {
+            int id = eventoJson['id'];
+
+            // Obtener detalles del evento individual
+            Evento evento = await obtenerDetallesEvento(id);
+            tempEventosList.add(evento);
+          }
+
+          return tempEventosList;
+        } else {
+          throw Exception('La respuesta no contiene una lista de eventos.');
         }
       } else {
-        print('Error en la respuesta: ${jsonResponse['message']}');
+        throw Exception('Error al cargar eventos: ${response.statusCode}');
       }
-    } else {
-      print('Error al obtener favoritos: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error al realizar la solicitud: $e');
     }
-  } catch (e) {
-    print('Error en obtenerFavoritos: $e');
   }
 
-  return [];
-}
+  Future<Evento> buscarEventoPorId(int id) async {
+    final String apiUrl = 'http://216.225.205.93:3000/api/eventos/$id';
 
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
 
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(utf8.decode(response.bodyBytes));
 
-Future<List<Evento>> obtenerEventosFavoritosPorId(int userId) async {
-    final String apiUrl = 'http://216.225.205.93:3000/api/favoritos/byIdUser/$userId';
+        if (jsonResponse['rta'] == true && jsonResponse['evento'] != null) {
+          return Evento.fromJson(jsonResponse['evento']);
+        } else {
+          throw Exception('No se encontró el evento con id: $id');
+        }
+      } else {
+        throw Exception('Error al obtener evento: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error al realizar la solicitud del evento: $e');
+    }
+  }
+
+  Future<List<Evento>> cargarEventosDelMes() async {
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/eventos/buscarEventos';
+
+    DateTime ahora = DateTime.now();
+    DateTime primerDiaMes = DateTime(ahora.year, ahora.month, 1);
+    DateTime ultimoDiaMes = DateTime(ahora.year, ahora.month + 1, 0);
+
+    String fechaInicio =
+        "${primerDiaMes.year}-${primerDiaMes.month.toString().padLeft(2, '0')}-${primerDiaMes.day.toString().padLeft(2, '0')}";
+    String fechaFin =
+        "${ultimoDiaMes.year}-${ultimoDiaMes.month.toString().padLeft(2, '0')}-${ultimoDiaMes.day.toString().padLeft(2, '0')}";
+
+    print('fechaInicio: $fechaInicio');
+    print('fechaFin: $fechaFin');
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'fecha_inicio': fechaInicio,
+          'fecha_fin': fechaFin,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        if (responseData['rta'] == true) {
+          List<dynamic> eventosJson = responseData['eventos'];
+          List<Evento> eventos = eventosJson
+              .map((eventoJson) => Evento.fromJson(eventoJson))
+              .toList();
+          return eventos;
+        } else {
+          print('Error en la respuesta: ${responseData['message']}');
+          return [];
+        }
+      } else {
+        print('Error en la solicitud: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error en la conexión: $e');
+      return [];
+    }
+  }
+
+  Future<List<Evento>> cargarEventosCategoria(int idCategoria) async {
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/eventos/buscarEventos';
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'id_categoria': idCategoria}),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        if (responseData['rta'] == true) {
+          List<dynamic> eventosJson = responseData['eventos'];
+          List<Evento> eventos = eventosJson
+              .map((eventoJson) => Evento.fromJson(eventoJson))
+              .toList();
+          print('Eventossssss${eventosJson}');
+          print('id cat: ${idCategoria}');
+          return eventos;
+        } else {
+          print('Error en la respuesta: ${responseData['message']}');
+          return [];
+        }
+      } else {
+        print('Error en la solicitud: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error en la conexión: $e');
+      return [];
+    }
+  }
+
+  Future<List<Evento>> cargarEventosCercanos(
+      String latitud, String longitud) async {
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/eventos/cercanos/$longitud/$latitud';
+    List<Evento> eventosConDetalles = [];
+    List<dynamic> eventosDistancia = [];
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        List<dynamic> responseData = jsonDecode(response.body);
+
+        for (var eventoData in responseData) {
+          int eventoId = eventoData['id'];
+          Evento evento = await obtenerDetallesEvento(eventoId);
+          eventosConDetalles.add(evento);
+        }
+        eventosDistancia = responseData;
+      } else {
+        print(
+            'Error en la solicitud de eventos cercanos: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en la conexión: $e');
+    }
+
+    return eventosConDetalles;
+  }
+
+  Future<List<Map<String, dynamic>>> obtenerEventosCercanos(
+      String latitud, String longitud) async {
+    final url = Uri.parse(
+        'http://216.225.205.93:3000/api/eventos/cercanos/$longitud/$latitud');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        // Decodificar la respuesta JSON y retornarla como una lista de mapas
+        return List<Map<String, dynamic>>.from(json.decode(response.body));
+      } else {
+        // Manejar errores de la solicitud
+        throw Exception('Error al obtener eventos cercanos');
+      }
+    } catch (e) {
+      // Manejar cualquier excepción
+      throw Exception('Error al realizar la solicitud: $e');
+    }
+  }
+
+  Future<List<Evento>> obtenerEventosFavoritos() async {
+    final String favoritosUrl =
+        'http://216.225.205.93:3000/api/favoritos/principales';
+
+    try {
+      final response = await http.get(
+        Uri.parse(favoritosUrl),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonResponse['rta'] == true) {
+          var favoritoList = jsonResponse['favorito'];
+
+          if (favoritoList is List && favoritoList.isNotEmpty) {
+            List<Evento> eventosFavoritos = [];
+
+            for (var favoritoGroup in favoritoList) {
+              var favoritos = favoritoGroup['Favoritos'];
+              if (favoritos is List) {
+                for (var favorito in favoritos) {
+                  int idEvento = favorito['id_event'];
+                  Evento evento = await obtenerDetallesEvento(idEvento);
+                  eventosFavoritos.add(evento);
+                }
+              }
+            }
+
+            return eventosFavoritos;
+          }
+        } else {
+          print('Error en la respuesta: ${jsonResponse['message']}');
+        }
+      } else {
+        print('Error al obtener favoritos: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en obtenerEventosFavoritos: $e');
+    }
+
+    return [];
+  }
+
+  Future<Evento> obtenerDetallesEvento(int id) async {
+    final Uri url = Uri.parse('http://216.225.205.93:3000/api/eventos/$id');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonResponse['rta'] == true) {
+          var eventoJson = jsonResponse['evento'];
+          if (eventoJson != null && eventoJson is Map<String, dynamic>) {
+            return Evento.fromJson(eventoJson);
+          } else {
+            throw Exception(
+                'La respuesta del servidor no contiene un evento válido.');
+          }
+        } else {
+          throw Exception('Error al obtener detalles del evento.');
+        }
+      } else {
+        throw Exception(
+            'Error al obtener detalles del evento: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en obtenerDetallesEvento: $e');
+      throw Exception('Error al realizar la solicitud: $e');
+    }
+  }
+
+  Future<List<dynamic>> obtenerFavoritos(int userId) async {
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/favoritos/byIdUser/$userId';
+
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonResponse['rta'] == true) {
+          var favoritoList = jsonResponse['favorito'];
+
+          // Verificar si la lista 'favorito' no está vacía
+          if (favoritoList is List && favoritoList.isNotEmpty) {
+            return favoritoList;
+          }
+        } else {
+          print('Error en la respuesta: ${jsonResponse['message']}');
+        }
+      } else {
+        print('Error al obtener favoritos: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en obtenerFavoritos: $e');
+    }
+
+    return [];
+  }
+
+  Future<List<Evento>> obtenerEventosFavoritosPorId(int userId) async {
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/favoritos/byIdUser/$userId';
 
     try {
       final response = await http.get(
@@ -493,9 +522,7 @@ Future<List<Evento>> obtenerEventosFavoritosPorId(int userId) async {
     return [];
   }
 
-
-
-Future<bool> crearFavorito(int userId, int eventId) async {
+  Future<bool> crearFavorito(int userId, int eventId) async {
     final String apiUrl = 'http://216.225.205.93:3000/api/favoritos';
     final token = await UserPreferences.getToken();
 
@@ -536,7 +563,7 @@ Future<bool> crearFavorito(int userId, int eventId) async {
     final String baseUrl = "http://216.225.205.93:3000/api/favoritos/$idEvent";
     final token = await UserPreferences.getToken();
     final url = Uri.parse(baseUrl);
-    
+
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -562,6 +589,4 @@ Future<bool> crearFavorito(int userId, int eventId) async {
       return false;
     }
   }
-
-
 }

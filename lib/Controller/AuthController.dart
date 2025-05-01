@@ -8,6 +8,7 @@ import 'package:goevent2/Api/ApiWrapper.dart';
 import 'package:goevent2/Bottombar.dart';
 import 'package:goevent2/Controller/UserModel.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
+import 'package:goevent2/onbonding.dart';
 import 'package:goevent2/utils/AppWidget.dart';
 import 'package:http/http.dart' as http;
 
@@ -520,6 +521,61 @@ class AuthController extends GetxController {
       print('Error: ${response.reasonPhrase}');
       print('Error Backend: $error');
       return false;
+    }
+  }
+
+  Future<bool> isSessionOpen() async {
+    var token = await UserPreferences.getToken();
+
+    if (token == null || !await AuthController().validarToken(token!)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> validarToken(String token) async {
+    final encodedToken = Uri.encodeComponent(token).replaceAll('%24', '\$');
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/auth/validToken/$encodedToken';
+    print('URL completa: $apiUrl');
+    print(token);
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      // Imprime el código de estado y el cuerpo de la respuesta
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Intenta decodificar la respuesta solo si el código de estado es 200
+        try {
+          var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+          if (jsonResponse['rta'] == true) {
+            print('TOKEN VALIDO');
+            return true;
+          } else {
+            print(
+                'Error en la validación del token: ${jsonResponse['message']}');
+            print('TOKEN INVALIDO');
+            return false;
+          }
+        } catch (e) {
+          print('Error al decodificar el JSON: $e');
+          return false;
+        }
+      } else {
+        print('Error en la solicitud: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error en en validar el token: $e');
+      throw Exception('Error al realizar la solicitud: $e');
     }
   }
 

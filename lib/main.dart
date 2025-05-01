@@ -11,6 +11,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:goevent2/langauge_translate.dart';
 import 'package:goevent2/spleshscreen.dart';
 import 'package:goevent2/utils/colornotifire.dart';
+import 'package:goevent2/utils/deepLinkHandler.dart';
 import 'package:provider/provider.dart';
 import 'agent_chat_screen/chat_screen.dart';
 
@@ -29,11 +30,8 @@ void main() async {
     child: MaterialApp(
       // Envuelve GetMaterialApp con MaterialApp aquí
       // Se repiten los mismos locales de GetMaterialApp por el anidado
-      supportedLocales: [
-         const Locale('en'),
-         const Locale('es')
-       ],
-       localizationsDelegates: [
+      supportedLocales: [const Locale('en'), const Locale('es')],
+      localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -52,18 +50,18 @@ void main() async {
       home: GetMaterialApp(
         translations: LocaleString(),
         localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-         const Locale('en'),
-         const Locale('es')
-       ],
-        home: const Directionality(
-          textDirection: TextDirection.ltr, // set this property
-          child: Spleshscreen(),
-        ),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [const Locale('en'), const Locale('es')],
+        home: Stack(children: [
+          Offstage(offstage: true, child: DeepLinkHandler()),
+          const Directionality(
+            textDirection: TextDirection.ltr, 
+            child: Spleshscreen(),
+          ),
+        ]),
       ),
     ),
   ));

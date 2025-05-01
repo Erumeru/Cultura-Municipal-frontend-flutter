@@ -50,50 +50,50 @@ class _SpleshscreenState extends State<Spleshscreen> {
 
   late StreamSubscription<Position> positionStream;
 
-  Future<bool> validarToken(String token) async {
-    final encodedToken = Uri.encodeComponent(token).replaceAll('%24', '\$');
-    final String apiUrl =
-        'http://216.225.205.93:3000/api/auth/validToken/$encodedToken';
-    print('URL completa: $apiUrl');
-    print(token);
-    try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
+  // Future<bool> validarToken(String token) async {
+  //   final encodedToken = Uri.encodeComponent(token).replaceAll('%24', '\$');
+  //   final String apiUrl =
+  //       'http://216.225.205.93:3000/api/auth/validToken/$encodedToken';
+  //   print('URL completa: $apiUrl');
+  //   print(token);
+  //   try {
+  //     final response = await http.get(
+  //       Uri.parse(apiUrl),
+  //       headers: {
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //       },
+  //     );
 
-      // Imprime el código de estado y el cuerpo de la respuesta
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+  //     // Imprime el código de estado y el cuerpo de la respuesta
+  //     print('Response status: ${response.statusCode}');
+  //     print('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        // Intenta decodificar la respuesta solo si el código de estado es 200
-        try {
-          var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
-          if (jsonResponse['rta'] == true) {
-            print('TOKEN VALIDO');
-            return true;
-          } else {
-            print(
-                'Error en la validación del token: ${jsonResponse['message']}');
-            print('TOKEN INVALIDO');
-            return false;
-          }
-        } catch (e) {
-          print('Error al decodificar el JSON: $e');
-          return false;
-        }
-      } else {
-        print('Error en la solicitud: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Error en en validar el token: $e');
-      throw Exception('Error al realizar la solicitud: $e');
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       // Intenta decodificar la respuesta solo si el código de estado es 200
+  //       try {
+  //         var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+  //         if (jsonResponse['rta'] == true) {
+  //           print('TOKEN VALIDO');
+  //           return true;
+  //         } else {
+  //           print(
+  //               'Error en la validación del token: ${jsonResponse['message']}');
+  //           print('TOKEN INVALIDO');
+  //           return false;
+  //         }
+  //       } catch (e) {
+  //         print('Error al decodificar el JSON: $e');
+  //         return false;
+  //       }
+  //     } else {
+  //       print('Error en la solicitud: ${response.statusCode}');
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     print('Error en en validar el token: $e');
+  //     throw Exception('Error al realizar la solicitud: $e');
+  //   }
+  // }
 
   Future<void> initializeAsyncDependencies() async {
     try {
@@ -102,7 +102,7 @@ class _SpleshscreenState extends State<Spleshscreen> {
         () async {
           token = await UserPreferences.getToken();
 
-          if (token == null || !await validarToken(token!)) {
+          if (token == null || !await AuthController().validarToken(token!)) {
             Get.to(() => const Onbonding(), duration: Duration.zero);
           } else {
             Get.to(() => const Bottombar(), duration: Duration.zero);
