@@ -11,6 +11,7 @@ import 'package:goevent2/Bottombar.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/home/home.dart';
 import 'package:goevent2/utils/AppWidget.dart';
+import 'package:goevent2/utils/globals.dart';
 import 'package:goevent2/utils/media.dart';
 import 'package:latlong2/latlong.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -97,18 +98,16 @@ class _SpleshscreenState extends State<Spleshscreen> {
 
   Future<void> initializeAsyncDependencies() async {
     try {
-      Timer(
-        const Duration(seconds: 4),
-        () async {
-          token = await UserPreferences.getToken();
+       if (deepLinkHandled) return;
+      token = await UserPreferences.getToken();
 
-          if (token == null || !await AuthController().validarToken(token!)) {
-            Get.to(() => const Onbonding(), duration: Duration.zero);
-          } else {
-            Get.to(() => const Bottombar(), duration: Duration.zero);
-          }
-        },
-      );
+      if (token == null || !await AuthController().validarToken(token!)) {
+        Get.to(() => const Onbonding(), duration: Duration.zero);
+      } else {
+        Get.to(() => const Bottombar(), duration: Duration.zero);
+      }
+
+      ;
     } catch (e) {
       print("problemaaaaaaaa: ${e}");
       Get.to(() => const Onbonding(), duration: Duration.zero);

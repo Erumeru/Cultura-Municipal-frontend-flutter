@@ -27,41 +27,43 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => ColorNotifire())],
-    child: MaterialApp(
-      // Envuelve GetMaterialApp con MaterialApp aquí
-      // Se repiten los mismos locales de GetMaterialApp por el anidado
-      supportedLocales: [const Locale('en'), const Locale('es')],
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      title: 'EvSon'.tr,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: false,
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        dividerColor: Colors.transparent,
-        // primarySwatch: Colors.blue,
-        fontFamily: "Gilroy",
-      ),
-      home: GetMaterialApp(
-        translations: LocaleString(),
+    child: Directionality(
+      textDirection: TextDirection.ltr,
+      child: MaterialApp(
+        // Envuelve GetMaterialApp con MaterialApp aquí
+        // Se repiten los mismos locales de GetMaterialApp por el anidado
+        supportedLocales: [const Locale('en'), const Locale('es')],
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [const Locale('en'), const Locale('es')],
-        home: Stack(children: [
-          Offstage(offstage: true, child: DeepLinkHandler()),
-          const Directionality(
-            textDirection: TextDirection.ltr, 
-            child: Spleshscreen(),
-          ),
-        ]),
+        title: 'EvSon'.tr,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: false,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          dividerColor: Colors.transparent,
+          // primarySwatch: Colors.blue,
+          fontFamily: "Gilroy",
+        ),
+        home: GetMaterialApp(
+          translations: LocaleString(),
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [const Locale('en'), const Locale('es')],
+          home: Stack(children: [
+            const 
+               Spleshscreen(),
+            
+            Offstage(offstage: true, child: DeepLinkHandler()),
+          ]),
+        ),
       ),
     ),
   ));

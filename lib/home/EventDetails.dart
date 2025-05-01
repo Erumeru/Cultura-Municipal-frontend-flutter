@@ -17,6 +17,7 @@ import 'package:goevent2/home/Evento.dart';
 import 'package:goevent2/home/Gallery_View.dart';
 import 'package:goevent2/home/TrendingCatPage.dart';
 import 'package:goevent2/utils/AppWidget.dart';
+import 'package:goevent2/utils/globals.dart';
 import 'package:goevent2/utils/media.dart';
 import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
@@ -293,6 +294,8 @@ class _EventsDetailsState extends State<EventsDetails> {
     obtenerNombrePublicoObjetivo(widget.evento.idPublicoObjetivo);
     print('id de usuario es: ${widget.evento.idUsuario}');
     print('organizador es: ${widget.evento.organizador}');
+    //Actualizar el deepHandler
+    deepLinkHandled = false;
   }
 
   Future<void> cargarDatos() async {
@@ -901,7 +904,8 @@ class _EventsDetailsState extends State<EventsDetails> {
                                                       color: notifire.textcolor
                                                           .withOpacity(0.4)),
                                                   hintText:
-                                                      'Describe the problem...'.tr,
+                                                      'Describe the problem...'
+                                                          .tr,
                                                   border: OutlineInputBorder(),
                                                 ),
                                               ),
@@ -947,20 +951,20 @@ class _EventsDetailsState extends State<EventsDetails> {
                                                               'http://216.225.205.93:3000/api/eventos/reportarEvento',
                                                               data)
                                                           .then((response) {
-                                                            print('response ' '$response');
-                                                          if ((response['rta'] ==
-                                                              true)) {
-                                                            ApiWrapper
-                                                                .showToastMessage(
-                                                                    'Report submitted'
-                                                                        .tr);
-                                                          } else {
-                                                            ApiWrapper
-                                                                .showToastMessage(
-                                                                    'There was an error submitting the report'
-                                                                        .tr);
-                                                          }
-                                                        
+                                                        print('response '
+                                                            '$response');
+                                                        if ((response['rta'] ==
+                                                            true)) {
+                                                          ApiWrapper
+                                                              .showToastMessage(
+                                                                  'Report submitted'
+                                                                      .tr);
+                                                        } else {
+                                                          ApiWrapper
+                                                              .showToastMessage(
+                                                                  'There was an error submitting the report'
+                                                                      .tr);
+                                                        }
                                                       });
                                                       print(
                                                           "Reporte enviado: $mensaje");

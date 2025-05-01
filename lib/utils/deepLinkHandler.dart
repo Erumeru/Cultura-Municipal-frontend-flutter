@@ -1,3 +1,5 @@
+// deepLinkHandler.dart
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:goevent2/Api/ApiWrapper.dart';
@@ -5,93 +7,102 @@ import 'package:goevent2/Controller/AuthController.dart';
 import 'package:goevent2/home/EventDetails.dart';
 import 'package:goevent2/home/Evento.dart';
 import 'package:goevent2/spleshscreen.dart';
-import 'package:uni_links/uni_links.dart';
-import 'dart:async'; // for StreamSubscription
+import 'package:goevent2/utils/globals.dart';
 
 class DeepLinkHandler extends StatefulWidget {
+  const DeepLinkHandler({Key? key}) : super(key: key);
+
   @override
   _DeepLinkHandlerState createState() => _DeepLinkHandlerState();
 }
 
 class _DeepLinkHandlerState extends State<DeepLinkHandler> {
-  StreamSubscription? _sub;
+  late AppLinks _appLinks;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    initUniLinks();
+    _initDeepLinking();
   }
 
-  Future<void> initUniLinks() async {
-    // Handle app started from a deep link (cold start)
+  Future<void> _initDeepLinking() async {
+    if (_isInitialized) return;
+
+    _appLinks = AppLinks();
+
+    // Handle app start from deep link
     try {
-      final initialLink = await getInitialLink();
-      if (initialLink != null) {
-        _handleDeepLink(initialLink);
+      final Uri? initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null) {
+        _handleDeepLink(initialUri);
       }
-    } catch (e) {
-      print('Failed to get initial link: $e');
-    }
 
-    // Handle app opened from background
-    _sub = linkStream.listen((String? link) {
-      if (link != null) {
-        _handleDeepLink(link);
-      }
-    }, onError: (err) {
-      print('Error listening to linkStream: $err');
-    });
+      // Handle deep links while app is running
+      _appLinks.uriLinkStream.listen(
+        (Uri? uri) {
+          if (uri != null) {
+            _handleDeepLink(uri);
+          }
+        },
+        onError: (err) {
+          debugPrint('Deep link error: $err');
+        },
+      );
+
+      _isInitialized = true;
+    } catch (e) {
+      debugPrint('Deep linking initialization error: $e');
+    }
   }
 
-  void _handleDeepLink(String link) async {
-    print('Deep link received: $link');
+  Future<void> _handleDeepLink(Uri uri) async {
+    debugPrint('Deep link received: $uri');
 
-    Uri uri = Uri.parse(link);
-
-    if (uri.host == "assetsjosntest.web.app") {
-      if (await AuthController().isSessionOpen()) {
+    try {
+      if (uri.host == "assetsjosntest.web.app") {
         if (uri.pathSegments.isNotEmpty && uri.pathSegments[0] == "evento") {
-          int? eventId = int.tryParse(uri.pathSegments[1]);
-          if (eventId != null) {
-            try {
-              Evento event = await EventosService().buscarEventoPorId(eventId);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EventsDetails(
+          // Check authentication
+          final bool isAuthenticated = await AuthController().isSessionOpen();
+          
+          if (!isAuthenticated) {
+            Get.offAll(() => const Spleshscreen());
+            return;
+          }
+
+          // Handle event deep link
+          if (uri.pathSegments.length > 1) {
+            final String eventIdStr = uri.pathSegments[1];
+            final int? eventId = int.tryParse(eventIdStr);
+
+            if (eventId != null) {
+              try {
+                final Evento event = await EventosService().buscarEventoPorId(eventId);
+                deepLinkHandled= true;
+                Get.to(
+                  () => EventsDetails(
                     eid: event.id.toString(),
                     evento: event,
                   ),
-                ),
-              );
-            } on Exception catch (_) {
-              ApiWrapper.showToastMessage("The event doesn't exists".tr);
+                );
+              } catch (e) {
+                ApiWrapper.showToastMessage("The event doesn't exist".tr);
+                debugPrint('Error fetching event: $e');
+              }
+            } else {
+              ApiWrapper.showToastMessage('Invalid event ID'.tr);
             }
-          } else {
-            ApiWrapper.showToastMessage('Invalid event ID'.tr);
           }
         }
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Spleshscreen(),
-          ),
-        );
       }
+    } catch (e) {
+      debugPrint('Error handling deep link: $e');
+      ApiWrapper.showToastMessage('Error processing the link'.tr);
     }
-  }
-
-  @override
-  void dispose() {
-    _sub?.cancel();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text('Listening for links...')),
-    );
+    return const SizedBox.shrink();
   }
 }
