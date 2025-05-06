@@ -1634,8 +1634,10 @@ class LocaleString extends Translations {
           "Please describe the problem with 30 characters or more": "Por favor describa el problema en 30 caracteres o más",
           "There was an error submitting the report": "Hubo un error al enviar el reporte",
           "Report submitted": "Reporte enviado",
-          "Describe the problem...":"Describa el problema..."
-        },
+          "Describe the problem...":"Describa el problema...",
+          "Check out this awesome event happening soon:" : "Mira este increíble evento que se llevará a cabo pronto:",
+          "Discover all the details and more using our app — it's the easiest way to stay updated and never miss a thing.": "Descubre todos los detalles y mucho más usando nuestra app — es la forma más fácil de mantenerte al tanto y no perderte nada."
+          },
 
         'tr_IN': {
           "Settings": "ayar",

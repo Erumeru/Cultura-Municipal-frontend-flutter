@@ -566,7 +566,7 @@ class _EventsDetailsState extends State<EventsDetails> {
                             ),
                             child: CircleAvatar(
                               radius: 18,
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: const Color.fromARGB(92, 0, 0, 0),
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 3),
                                 child: LikeButton(
@@ -603,13 +603,16 @@ class _EventsDetailsState extends State<EventsDetails> {
                             ),
                             child: CircleAvatar(
                               radius: 18,
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: const Color.fromARGB(92, 0, 0, 0),
                               child: IconButton(
                                   padding: EdgeInsets.only(right: 3),
                                   icon: Icon(Icons.share_outlined,
                                       color: Colors.white, size: 24),
-                                  onPressed: () async {}),
+                                  onPressed: () async {
+                                    share();
+                                  }),
                             ),
+                            
                           ),
                         ),
                       ],
@@ -1377,7 +1380,7 @@ class _EventsDetailsState extends State<EventsDetails> {
     await FlutterShare.share(
         title: '$appName',
         text:
-            'Hey! Now use our app to share with your family or friends. User will get wallet amount on your 1st successful transaction. Enter my referral code $code & Enjoy your shopping !!!',
+            "Check out this awesome event happening soon:".tr + " https://assetsjosntest.web.app/evento/${widget.eid} " + "Discover all the details and more using our app — it's the easiest way to stay updated and never miss a thing.".tr,
         linkUrl: 'https://play.google.com/store/apps/details?id=$packageName',
         chooserTitle: '$appName');
   }
