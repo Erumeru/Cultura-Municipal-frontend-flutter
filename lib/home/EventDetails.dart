@@ -581,7 +581,7 @@ class _EventsDetailsState extends State<EventsDetails> {
                                   likeBuilder: (bool isLiked) {
                                     return !isLiked
                                         ? const Icon(Icons.favorite_border,
-                                            color: Colors.grey, size: 24)
+                                            color: Colors.white, size: 24)
                                         : const Icon(Icons.favorite,
                                             color: Color(0xffF0635A), size: 24);
                                   },
@@ -607,7 +607,7 @@ class _EventsDetailsState extends State<EventsDetails> {
                               child: IconButton(
                                   padding: EdgeInsets.only(right: 3),
                                   icon: Icon(Icons.share_outlined,
-                                      color: Colors.grey, size: 24),
+                                      color: Colors.white, size: 24),
                                   onPressed: () async {}),
                             ),
                           ),
@@ -651,9 +651,11 @@ class _EventsDetailsState extends State<EventsDetails> {
           ? CustomScrollView(
               slivers: [
                 SliverPersistentHeader(
+                  
                   pinned: true,
                   floating: true,
                   delegate: MySliverAppBar(
+                      
                       expandedHeight: 200.0,
                       eventData: eventData,
                       images: _images,
