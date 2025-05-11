@@ -128,14 +128,19 @@ class _ProfileState extends State<Profile> {
                         Get.to(() => const TicketStatusPage(type: "0"));
                       },
                     ),
-                    SizedBox(height: Get.height * 0.02),
-                    settingWidget(
-                      tital: "Wallet".tr,
-                      image: "image/wallet.png",
-                      onTap: () {
-                        Get.to(() => const WalletReportPage());
-                      },
-                    ),
+
+                    //Deactivated function
+
+                    // SizedBox(height: Get.height * 0.02),
+                    // settingWidget(
+                    //   tital: "Wallet".tr,
+                    //   image: "image/wallet.png",
+                    //   onTap: () {
+                    //     Get.to(() => const WalletReportPage());
+                    //   },
+                    // ),
+
+
                     // SizedBox(height: Get.height * 0.02),
                     // settingWidget(
                     //   tital: "Chat".tr,
@@ -160,14 +165,18 @@ class _ProfileState extends State<Profile> {
                         Get.to(() => const Note());
                       },
                     ),
-                    SizedBox(height: Get.height * 0.02),
-                    settingWidget(
-                      tital: "Refer a Friend".tr,
-                      image: "image/Discount-1.png",
-                      onTap: () {
-                        Get.to(() => const ReferFriendPage());
-                      },
-                    ),
+
+                    //Deactivated function
+
+                    // SizedBox(height: Get.height * 0.02),
+                    // settingWidget(
+                    //   tital: "Refer a Friend".tr,
+                    //   image: "image/Discount-1.png",
+                    //   onTap: () {
+                    //     Get.to(() => const ReferFriendPage());
+                    //   },
+                    // ),
+
                     SizedBox(height: Get.height * 0.02),
                     settingWidget(
                       tital: "Dark Mode".tr,

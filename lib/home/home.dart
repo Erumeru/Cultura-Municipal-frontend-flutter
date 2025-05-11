@@ -249,7 +249,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Future<void> cargarEventosDelMes() async {
     EventosService service = EventosService();
     try {
+      print("Cargando eventos del mes");
       List<Evento> eventos = await service.cargarEventosDelMes();
+      for(int i=0; i<eventos.length; i++){
+        print('Evento: ${eventos[i].tituloEvento}, Fecha: ${eventos[i].fechaFin}');
+      };
+      
       setState(() {
         thisMonthEvent = eventos;
       });
@@ -649,6 +654,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (ctx, i) {
+                        print("building month event" + thisMonthEvent[i].tituloEvento);
                         return monthly(thisMonthEvent[i], i);
                       },
                     ),
