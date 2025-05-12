@@ -251,9 +251,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     try {
       print("Cargando eventos del mes");
       List<Evento> eventos = await service.cargarEventosDelMes();
-      for(int i=0; i<eventos.length; i++){
-        print('Evento: ${eventos[i].tituloEvento}, Fecha: ${eventos[i].fechaFin}');
-      };
       
       setState(() {
         thisMonthEvent = eventos;

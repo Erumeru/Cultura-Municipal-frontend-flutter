@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:goevent2/Api/user_Model.dart';
+import 'package:goevent2/Controller/UserModel.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -231,13 +233,14 @@ class EventosService {
     DateTime primerDiaMes = DateTime(ahora.year, ahora.month, 1);
     DateTime ultimoDiaMes = DateTime(ahora.year, ahora.month + 1, 0);
 
+    //Loads user data to get the municipality
+    UserModel? user = await UserPreferences.getUser();
+    int idMunicipio = user?.idMunicipio ?? 1;
+
     String fechaInicio =
         "${primerDiaMes.year}-${primerDiaMes.month.toString().padLeft(2, '0')}-${primerDiaMes.day.toString().padLeft(2, '0')}";
     String fechaFin =
         "${ultimoDiaMes.year}-${ultimoDiaMes.month.toString().padLeft(2, '0')}-${ultimoDiaMes.day.toString().padLeft(2, '0')}";
-
-    print('fechaInicio: $fechaInicio');
-    print('fechaFin: $fechaFin');
 
     try {
       final response = await http.post(
@@ -248,6 +251,8 @@ class EventosService {
         body: jsonEncode({
           'fecha_inicio': fechaInicio,
           'fecha_fin': fechaFin,
+          'status_event': 1,
+          'id_municipio': idMunicipio
         }),
       );
 
