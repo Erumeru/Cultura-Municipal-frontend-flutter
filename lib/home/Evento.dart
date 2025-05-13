@@ -225,7 +225,7 @@ class EventosService {
     }
   }
 
-  Future<List<Evento>> cargarEventosDelMes() async {
+  Future<List<Evento>> cargarEventosDelMes({int? idMunicipio}) async {
     final String apiUrl =
         'http://216.225.205.93:3000/api/eventos/buscarEventos';
 
@@ -233,9 +233,8 @@ class EventosService {
     DateTime primerDiaMes = DateTime(ahora.year, ahora.month, 1);
     DateTime ultimoDiaMes = DateTime(ahora.year, ahora.month + 1, 0);
 
-    //Loads user data to get the municipality
-    UserModel? user = await UserPreferences.getUser();
-    int idMunicipio = user?.idMunicipio ?? 1;
+    // UserModel? user = await UserPreferences.getUser();
+    // int idMunicipio = user?.idMunicipio ?? 1;
 
     String fechaInicio =
         "${primerDiaMes.year}-${primerDiaMes.month.toString().padLeft(2, '0')}-${primerDiaMes.day.toString().padLeft(2, '0')}";
@@ -253,6 +252,7 @@ class EventosService {
           'fecha_fin': fechaFin,
           'status_event': 1,
           'id_municipio': idMunicipio
+          //If there's an idMunicipio it loads the month's events of that municipality
         }),
       );
 

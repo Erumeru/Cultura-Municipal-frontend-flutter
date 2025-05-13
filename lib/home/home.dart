@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'package:goevent2/Controller/UserModel.dart';
 import 'package:goevent2/Controller/UserPreferences.dart';
 import 'package:goevent2/home/Categoria.dart';
 import 'package:goevent2/home/Evento.dart';
@@ -251,7 +252,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     try {
       print("Cargando eventos del mes");
       List<Evento> eventos = await service.cargarEventosDelMes();
-      
+
       setState(() {
         thisMonthEvent = eventos;
       });
@@ -262,8 +263,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Future<void> cargarEventosCercanos() async {
     EventosService service = EventosService();
+    List<Evento> eventos = [];
+
     try {
-      List<Evento> eventos = await service.cargarEventosCercanos(lat, long);
+      UserModel? userData = await UserPreferences.getUser();
+      int? idMunicipio = userData?.idMunicipio;
+      //Loads the month's events of the user's municipality
+      if (idMunicipio != null) {
+        eventos = await service.cargarEventosDelMes(idMunicipio: idMunicipio);
+        print("carGANDO CON MUNICIPIO");
+      } else {
+        eventos = await service.cargarEventosCercanos(lat, long);
+        print("carGANDO SIN MUNICIPIO");
+      }
       setState(() {
         nearbyEvent = eventos;
       });
@@ -417,8 +429,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     cargarEventos();
     cargarEventosDelMes();
     //cargarThisMonthEvent();
-    cargarEventosCercanos();
     _loadUserData();
+    cargarEventosCercanos();
+
     initPlatformState();
   }
 
@@ -651,7 +664,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (ctx, i) {
-                        print("building month event" + thisMonthEvent[i].tituloEvento);
+                        print("building month event" +
+                            thisMonthEvent[i].tituloEvento);
                         return monthly(thisMonthEvent[i], i);
                       },
                     ),
