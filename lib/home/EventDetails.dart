@@ -94,6 +94,7 @@ class _EventsDetailsState extends State<EventsDetails> {
   String? fechaExpiracion;
 
   String nombrePublico = "";
+  String nombreOrganizador="";
 
   getdarkmodepreviousstate() async {
     final prefs = await SharedPreferences.getInstance();
@@ -156,6 +157,40 @@ class _EventsDetailsState extends State<EventsDetails> {
     }
     return false;
   }
+
+
+//Method to load organizer's name
+Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
+  final String apiUrl = 'http://216.225.205.93:3000/api/usuarios/$idOrganizador';
+  final String? token = await UserPreferences.getToken();
+
+  try {
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+
+      if (jsonResponse['rta'] == true) {
+        setState(() {
+          nombreOrganizador = jsonResponse['usuario']['nombre'];
+          print('Nombre del organizador: $nombreOrganizador');
+        });
+      } else {
+        print('Error en respuesta: ${jsonResponse['message']}');
+      }
+    } else {
+      print('Error de red: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error de conexión: $e');
+  }
+}
 
   Future<void> obtenerNombrePublicoObjetivo(int id) async {
     final String apiUrl = 'http://216.225.205.93:3000/api/publico-objetivo/$id';
@@ -292,6 +327,7 @@ class _EventsDetailsState extends State<EventsDetails> {
     cargarDatos();
     getdarkmodepreviousstate();
     obtenerNombrePublicoObjetivo(widget.evento.idPublicoObjetivo);
+    obtenerNombreOrganizadorPorId(int.parse(widget.evento.organizador));
     print('id de usuario es: ${widget.evento.idUsuario}');
     print('organizador es: ${widget.evento.organizador}');
     //Actualizar el deepHandler
@@ -843,7 +879,7 @@ class _EventsDetailsState extends State<EventsDetails> {
                                 concert("image/date.png", 'Precio',
                                     widget.evento.precio),
                                 concert("image/date.png", 'Organizador',
-                                    widget.evento.organizador),
+                                    nombreOrganizador),
                                 widget.evento.telefono.isNotEmpty
                                     ? concert("image/date.png", 'Telefono',
                                         widget.evento.telefono)
