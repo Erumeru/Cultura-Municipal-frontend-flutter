@@ -87,6 +87,7 @@ class _MunicipiosBoxState extends State<MunicipiosComboBox> {
           value: _selectedmunicipiosId,
           hint: Text(
             "Select municipality".tr,
+            style: TextStyle(color: Colors.grey),
           ),
           onChanged: (value) {
             setState(() {
@@ -103,7 +104,8 @@ class _MunicipiosBoxState extends State<MunicipiosComboBox> {
             return DropdownMenuItem<String>(
               value: municipio['id'].toString(),
               child: SizedBox(
-                width: 300,
+                  width: MediaQuery.of(context).size.width *
+                      0.6, 
                 child: Row(
                   children: [
                     const SizedBox(width: 8),

@@ -107,7 +107,9 @@ class Evento {
 }
 
 class EventosService {
-  Future<List<Evento>> cargarEventos() async {
+
+
+  Future<List<Evento>> cargarEventos({int? limit, int? offset, int? idMunicipio}) async {
     String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';
 
     try {
@@ -116,7 +118,7 @@ class EventosService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({}),
+        body: jsonEncode({'limit': limit, 'offset': offset, 'id_municipio': idMunicipio}),
       );
 
       if (response.statusCode == 200) {
@@ -146,6 +148,8 @@ class EventosService {
       throw Exception('Error al realizar la solicitud: $e');
     }
   }
+
+  
 
   Future<List<Evento>> cargarEventosEnUnaSemana() async {
     String apiUrl = 'http://216.225.205.93:3000/api/eventos/buscarEventos';

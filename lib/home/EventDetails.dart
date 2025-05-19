@@ -94,7 +94,7 @@ class _EventsDetailsState extends State<EventsDetails> {
   String? fechaExpiracion;
 
   String nombrePublico = "";
-  String nombreOrganizador="";
+  String nombreOrganizador = "";
 
   getdarkmodepreviousstate() async {
     final prefs = await SharedPreferences.getInstance();
@@ -158,39 +158,39 @@ class _EventsDetailsState extends State<EventsDetails> {
     return false;
   }
 
-
 //Method to load organizer's name
-Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
-  final String apiUrl = 'http://216.225.205.93:3000/api/usuarios/$idOrganizador';
-  final String? token = await UserPreferences.getToken();
+  Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
+    final String apiUrl =
+        'http://216.225.205.93:3000/api/usuarios/$idOrganizador';
+    final String? token = await UserPreferences.getToken();
 
-  try {
-    final response = await http.get(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
 
-      if (jsonResponse['rta'] == true) {
-        setState(() {
-          nombreOrganizador = jsonResponse['usuario']['nombre'];
-          print('Nombre del organizador: $nombreOrganizador');
-        });
+        if (jsonResponse['rta'] == true) {
+          setState(() {
+            nombreOrganizador = jsonResponse['usuario']['nombre'];
+            print('Nombre del organizador: $nombreOrganizador');
+          });
+        } else {
+          print('Error en respuesta: ${jsonResponse['message']}');
+        }
       } else {
-        print('Error en respuesta: ${jsonResponse['message']}');
+        print('Error de red: ${response.statusCode}');
       }
-    } else {
-      print('Error de red: ${response.statusCode}');
+    } catch (e) {
+      print('Error de conexión: $e');
     }
-  } catch (e) {
-    print('Error de conexión: $e');
   }
-}
 
   Future<void> obtenerNombrePublicoObjetivo(int id) async {
     final String apiUrl = 'http://216.225.205.93:3000/api/publico-objetivo/$id';
@@ -602,7 +602,8 @@ Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
                             ),
                             child: CircleAvatar(
                               radius: 18,
-                              backgroundColor: const Color.fromARGB(92, 0, 0, 0),
+                              backgroundColor:
+                                  const Color.fromARGB(92, 0, 0, 0),
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 3),
                                 child: LikeButton(
@@ -639,7 +640,8 @@ Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
                             ),
                             child: CircleAvatar(
                               radius: 18,
-                              backgroundColor: const Color.fromARGB(92, 0, 0, 0),
+                              backgroundColor:
+                                  const Color.fromARGB(92, 0, 0, 0),
                               child: IconButton(
                                   padding: EdgeInsets.only(right: 3),
                                   icon: Icon(Icons.share_outlined,
@@ -648,7 +650,6 @@ Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
                                     share();
                                   }),
                             ),
-                            
                           ),
                         ),
                       ],
@@ -690,11 +691,9 @@ Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
           ? CustomScrollView(
               slivers: [
                 SliverPersistentHeader(
-                  
                   pinned: true,
                   floating: true,
                   delegate: MySliverAppBar(
-                      
                       expandedHeight: 200.0,
                       eventData: eventData,
                       images: _images,
@@ -1415,8 +1414,10 @@ Future<void> obtenerNombreOrganizadorPorId(int idOrganizador) async {
   Future<void> share() async {
     await FlutterShare.share(
         title: '$appName',
-        text:
-            "Check out this awesome event happening soon:".tr + " https://assetsjosntest.web.app/evento/${widget.eid} " + "Discover all the details and more using our app — it's the easiest way to stay updated and never miss a thing.".tr,
+        text: "Check out this awesome event happening soon:".tr +
+            " https://assetsjosntest.web.app/evento/${widget.eid} " +
+            "Discover all the details and more using our app — it's the easiest way to stay updated and never miss a thing."
+                .tr,
         linkUrl: 'https://play.google.com/store/apps/details?id=$packageName',
         chooserTitle: '$appName');
   }
